@@ -64,7 +64,7 @@
           ></image>
         </view>
         <view class="text">
-          登录即代表您已阅读并同意 用户协议 与 隐私政策
+          登录即代表您已阅读并同意 <span>用户协议</span> 与 <span>隐私政策</span>
         </view>
       </view>
     </view>
@@ -74,7 +74,7 @@
       @close="isShow = false"
       @confirm="isShow = false"
     >
-      <scroll-view scroll-y="true" style="height: 200px">
+      <scroll-view scroll-y="true" style="height: 400px">
         <view>
           <h3>用户协议</h3>
           <br />
@@ -186,7 +186,7 @@ export default {
 	jump(){
 		console.log('jump')
 		uni.switchTab({
-			url:"/pages/sys/realtime/realtime"
+			url:"/pages/sys/home/home"
 		})
 	}
   },
@@ -197,7 +197,6 @@ export default {
 .loginBox {
   height: 100vh;
   width: 100vw;
-  background: pink;
   position: relative;
   .login {
     box-sizing: border-box;
@@ -279,6 +278,7 @@ export default {
         align-items: center;
         font-size: 25rpx;
         font-weight: 800;
+		color: #d7d7d7;
         // flex-direction: row;
         padding: 22rpx;
         box-sizing: border-box;
@@ -292,6 +292,9 @@ export default {
           font-size: 26rpx;
           color: #d7d7d7;
         }
+		span{
+			color: #000;
+		}
       }
       .other {
         width: 80%;

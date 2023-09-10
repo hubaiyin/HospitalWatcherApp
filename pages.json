@@ -16,12 +16,42 @@
             {
                 "navigationBarTitleText": "",
                 "enablePullDownRefresh": false,
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"app-plus": {
+					"bounce": "none"
+				}
             }
             
         }
         ,{
             "path" : "pages/sys/dateWatcher/dateWatcher",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/sys/home/home",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/sys/controls/controls",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/sys/personal/personal",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -48,8 +78,24 @@
 				"pagePath": "pages/sys/dateWatcher/dateWatcher",
 				"iconPath": "static/tabBar/8d1f76cc-d83a-48fb-9494-6710859f392a.png",
 				"selectedIconPath": "static/chosenTabBar/7dc170fd-41e0-4ba2-9c08-8b778e3f8fb3.png"
+			},
+			{
+				"pagePath": "pages/sys/home/home",
+				"iconPath": "static/tabBar/78e945d0-a335-4a9d-a9df-4e4bf76155d3.png",
+				"selectedIconPath": "static/chosenTabBar/b9746dc0-025d-4606-9c97-7e3204fc1ec3.png"
+			},
+			{
+				"pagePath": "pages/sys/controls/controls",
+				"iconPath": "static/tabBar/b3fbf784-8055-44e6-ac2b-99d8ac38bbc2.png",
+				"selectedIconPath": "static/chosenTabBar/371d0771-7c15-496f-9523-43524306b244.png"
+			},
+			{
+				"pagePath": "pages/sys/personal/personal",
+				"iconPath": "static/tabBar/47a5bfd1-cca1-4eba-b2e1-3505b226b2e8.png",
+				"selectedIconPath": "static/chosenTabBar/d404760d-1a14-4a00-880d-d053a5aaec1a.png"
 			}
-		]
+		],
+		"iconWidth": "32"
 	}
 	
 }
