@@ -1,17 +1,55 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"easycom":{
+		"^u-(.*)":"uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [
 		{
-			"path": "pages/index/index",
+			"path": "pages/sys/login/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
 			}
 		}
-	],
+	    ,{
+            "path" : "pages/sys/realtime/realtime",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+            }
+            
+        }
+        ,{
+            "path" : "pages/sys/dateWatcher/dateWatcher",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
-	"uniIdRouter": {}
+	"uniIdRouter": {},
+	"tabBar": {
+		"list": [
+			{
+				"pagePath": "pages/sys/realtime/realtime",
+				"iconPath": "static/tabBar/ed2166d2-67bb-4801-bad4-a45ea63903ec.png",
+				"selectedIconPath": "static/chosenTabBar/4a9cd915-0bcf-4a46-8852-d82827219a36.png"
+			},
+			{
+				"pagePath": "pages/sys/dateWatcher/dateWatcher",
+				"iconPath": "static/tabBar/8d1f76cc-d83a-48fb-9494-6710859f392a.png",
+				"selectedIconPath": "static/chosenTabBar/7dc170fd-41e0-4ba2-9c08-8b778e3f8fb3.png"
+			}
+		]
+	}
+	
 }
