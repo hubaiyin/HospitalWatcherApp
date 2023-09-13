@@ -1,63 +1,55 @@
 <template>
-	<view class="main" :style="{height:safeHeight + 'px'}">
-		<view class="inner">	
+	<view class="main" :style="{height:safeHeight + 'px'}">	
+		<view class="inner">
 			<view class="header">
 				<view class="topNav">
-					<view class="left">
+					<view class="left" :class="choosen === 1?'choosen':''" @click="choosen = 1">
 						<span>
-							<h2>实时监测</h2>
+							<h2 v-show="choosen === 1">实时监测</h2>
+							<h3 v-show="choosen === 2">实时监测</h3>
 						</span>
 					</view>
-					<view class="right">
+					<view class="right" :class="choosen === 2?'choosen':''" @click="choosen = 2">
 						<span>
-							<h3>历史数据</h3>
+							<h2 v-show="choosen === 2">历史数据</h2>
+							<h3 v-show="choosen === 1">历史数据</h3>
 						</span>
 					</view>
 				</view>
 				<view class="setting">
-					<image src="../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png" mode="aspectFit" alt=""></image>
+					<image
+						src="../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png"
+						mode="aspectFit"
+						alt=""
+					></image>
 				</view>
 			</view>
-			<view class="body">
-				<view class="total">
-					<view class="left">
-						<span>今日报警数：47</span>
-						<span>总报警数：12</span>
-						<span>较昨日变化：-15</span>
-					</view>
-					<view class="right">
-						<image src="../../../static/analysis.png" mode="aspectFit" alt=""></image>
-					</view>
-				</view>		 
-				<view class="chart"></view>
-				<view class="category">
-					<view class="dangerArea"></view>
-					<view class="fog"></view>
-					<view class="standArea"></view>
-					<view class="fall"></view>
-					<view class="fire"></view>
-					<view class="smoke"></view>
-				</view>
-			</view>
-		</view>	
+			<real-time v-show="!(choosen-1)"></real-time>
+			<history-data v-show="(choosen-1)"></history-data>
+		</view>
 	</view>
 </template>
 
 <script>
+	import realTime from './realTime.vue';
+	import historyData from './historyData.vue';
 	export default {
+		components:{ realTime , historyData },
 		data() {
 			return {
 				safeHeight:0,
+				selected:false,
+				choosen: 1,
 			};
 		},
 		onLoad(){
 			this.safeHeight = uni.getWindowInfo().safeArea.height;
 			console.log(this.safeHeight);		
-		}
+		},
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.main {
 		// border: 2px solid red;
 		width: 100%;
@@ -67,139 +59,75 @@
 		display: flex;
 		justify-content: center;
 		.inner {
-			width: 95%;
 			// border: 2px solid blue;
+			width: 95%;
 			display: flex;
 			flex-direction: column;
-			justify-content: space-around;
-			.header {
-				// border: 2px solid green;
+			// justify-content: space-around;
+		}
+		.header {
+			// border: 2px solid red;
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 3%;
+			padding: 0 5rpx;
+			padding-bottom: 0;
+			box-sizing: border-box;
+			height: 80rpx;
+			.topNav {
+				// border: 2px solid red;
+				width: 445rpx;
 				display: flex;
-				align-items: flex-end;
 				justify-content: space-between;
-				// height: 10%;
-				.topNav {
-					// border: 2px solid red;
-					width: 445rpx;
+				.left {
+					// border: 2px solid pink;
 					display: flex;
-					justify-content: space-between;
-					.left {
-						// border: 2px solid pink;
-						display: flex;
-						justify-content: center;
-						align-items: flex-end;
-						span {
-							font-size:  40rpx;
-							position: relative;
-						}
-						h2::after {
-							content: '';
-							position: absolute;
-							width: 100%;
-							height: 28%;
-							left: 0;
-							bottom: 2px;
-							background: #9EB3FF;
-							z-index: -1;
-							border-radius: 5rpx;
-						}
-					}
-					.right {
-						// border: 2px solid pink;
-						display: flex;
-						justify-content: center;
-						align-items: flex-end;
-						span {
-							font-size: 38rpx;
-						}
+					justify-content: center;
+					align-items: flex-end;
+					span {
+						font-size: 38rpx;	
 					}
 				}
-				.setting {
-					// border: 2px solid red;
-					width: 65rpx;
-					height: 65rpx;
-					image {
+				.choosen {
+					display: flex;
+					justify-content: center;
+					align-items: flex-end;
+					span {
+						font-size: 40rpx;
+						position: relative;
+					}
+					h2::after {
+						content: "";
+						position: absolute;
 						width: 100%;
-						height: 100%;
+						height: 28%;
+						left: 0;
+						bottom: 2px;
+						background: #9eb3ff;
+						z-index: -1;
+						border-radius: 5rpx;
+						font-size: 80rpx;
+					}
+				}
+				.right {
+					// border: 2px solid pink;
+					display: flex;
+					justify-content: center;
+					align-items: flex-end;
+					span {
+						font-size: 38rpx;
 					}
 				}
 			}
-			.body {
-				height: 90%;
-				// border: 2px solid green;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: space-around;
-				.total {
-					// background-color: #7BBAF5;
-					background-image: linear-gradient(to right, #4D87EF , #99DCF9);
-					width: 99%;
-					height: 16%;
-					border-radius: 15rpx;
-					display: flex;
-					align-items: center;
-					justify-content: space-around;
-					.left {
-						// border: 2px solid red;
-						width: 50%;
-						height: 80%;
-						display: flex;
-						flex-direction: column;
-						align-items: flex-start;
-						justify-content: space-around;
-						span {
-							color: white;
-							font-weight: 600;
-							font-size: 15px;
-						}	
-					}
-					.right {
-						// border: 2px solid red;
-						width: 100rpx;
-						height: 100rpx;
-						image {
-							width: 100%;
-							height: 100%;
-						}
-					}
-				}
-				.chart {
-					background-color: #E1EDF6;
-					width: 99%;
-					height: 27%;
-					border-radius: 15rpx;
-				}
-				.category {
-					width: 99%;
-					height: 51%;
-					display: flex;
-					flex-wrap: wrap;
-					justify-content: space-between;
-					// border: 2px solid purple; 
-					.dangerArea,.fog,.standArea,.fire,.fall,.smoke {
-						width: 48%;
-						height: 31%;
-						border-radius: 15rpx;
-					}
-					.dangerArea {
-						background-color: #D6F6DB;
-					}					
-					.fog {
-						background-color: #F5F6CC;
-					}					
-					.standArea {
-						background-color: #DBFDF7;
-					}					
-					.fall {
-						background-color: #ffe3c2;
-					}					
-					.fire {
-						background-color: #E7E3FE;
-					}					
-					.smoke {
-						background-color: #FFD9D9;
-					}					
+			.setting {
+				// border: 2px solid red;
+				width: 30px;
+				height: 30px;
+				image {
+					width: 100%;
+					height: 100%;
 				}
 			}
 		}
