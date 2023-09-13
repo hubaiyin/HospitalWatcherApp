@@ -1,6 +1,7 @@
 <template>
 	<view>
 		<!-- <nav-bar :titleData="titleData"></nav-bar> -->111
+
 	</view>
 </template>
 

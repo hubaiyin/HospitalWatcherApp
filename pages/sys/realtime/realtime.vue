@@ -77,6 +77,7 @@
             @confirm="setTime"
             @cancel="show = false"
             :closeOnClickOverlay="true"
+			@close="show=false"
           >
           </u-datetime-picker>
           <view class="timeText">
@@ -141,16 +142,17 @@
         :closeOnClickOverlay="true"
         @close="showVideo = false"
         @confirm="showVideo = false"
+		width="348px"
       >
         <view class="informBox">
 			<view class="video">
 			  <video
 			    v-show="showVideo"
 			    src=""
-			    style="width: 224px; height: 224px; transition: 1s"
+			    style="width: 328px; height: 246px; transition: 1s"
 			  ></video>
 			</view>
-          <scroll-view scroll-y="true" style="height: 200px">
+          <view  style="height: 200px;overflow: auto;width: 328px;">
             <view class="contents">
               <view class="line">
                 <view class="column left"> 事件id </view>
@@ -215,7 +217,7 @@
 			    </view>
 			  </view>
 			</view>
-          </scroll-view>
+          </view>
         </view>
       </u-modal>
 	  <u-modal
@@ -226,16 +228,17 @@
 	    @confirm="showDeal = false"
 		showCancelButton
 		@cancel="showDeal=false"
+		width="348px"
 	  >
 	    <view class="informBox">
 	  			<view class="video">
 	  			  <video
 	  			    v-show="showDeal"
 	  			    src=""
-	  			    style="width: 224px; height: 224px; transition: 1s"
+	  			    style="width: 328px; height: 246px; transition: 1s"
 	  			  ></video>
 	  			</view>
-	      <scroll-view scroll-y="true" style="height: 200px">
+	      <view  style="height: 200px;overflow: auto;width: 328px;">
 	        <view class="contents">
 	          <view class="line">
 	            <view class="column left"> 事件id </view>
@@ -306,7 +309,7 @@
 				   <u--textarea :adjustPosition="false" height="120"></u--textarea>
 				  </view>
 				</view>
-	      </scroll-view>
+	      </view>
 	    </view>
 	  </u-modal>
     </view>
@@ -662,8 +665,8 @@ export default {
 	    justify-content: center;
 	    align-items: center;
 	  	margin-bottom: 32rpx;
-	  	width: 224px;
-	  	height: 224px;
+	  	width: 328px;
+	  	height: 246px;
 	  }
 	  .contents {
 	    width: 100%;

@@ -20,7 +20,7 @@
                     <view class="icon">
                         <image src="../../../static//alarm.png" mode="aspectFit"></image>
                     </view>
-                    <div class="titleText">危险区域</div>
+                    <view class="titleText">危险区域</view>
                 </view>
                 <view class="text">
                     <span>总事件数：3</span>
@@ -121,12 +121,13 @@
 
 <style lang="scss" scoped>
 .body {
-    height: 90%;
+    height: 95%;
     // border: 2px solid green;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
+    // margin-bottom: 20rpx;
     .total {
         // background-color: #7BBAF5;
         background-image: linear-gradient(to right, #4D87EF , #99DCF9);
