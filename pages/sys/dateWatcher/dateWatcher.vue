@@ -26,7 +26,7 @@
 						<span>较昨日变化：-15</span>
 					</view>
 					<view class="right">
-						<image src="../../../static/统计.png" mode="aspectFit" alt=""></image>
+						<image src="../../../static/analysis.png" mode="aspectFit" alt=""></image>
 					</view>
 				</view>		 
 				<view class="chart"></view>
