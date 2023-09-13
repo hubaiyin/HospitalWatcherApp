@@ -104,30 +104,33 @@
 					<canvas
 					  canvas-id="myCanvas"
 					  style="
-					    background-color: aqua;
 					    margin: 0 auto;
-					    height: 246px;
-					    width: 328px;
 						position: absolute;
 						top: 0;
 						left: 0;
-						z-index: 999;
+						z-index: 10;
 					  "
+					  :style="{height: 246+'px',
+					    width: 328+'px'}"
 					  @touchstart="start"
 					  @touchmove="move"
 					  @touchend="stop"
 					  :disable-scroll="true"
 					  ></canvas>
-			  		<image src="../../../static/logBack.jpeg" mode="aspectFit" style="height: 328px;width: 246px;"></image>
+					<view class="border" v-for="(box) in border" :key="box.id" :style="{width:box.width+'px',height:box.height+'px',top:box.top+'px',left:box.left+'px'}">
+						
+					</view>
 			  	</view>
 				<view class="edit">
 					<span>编辑区</span>
 					<image src="../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png" mode="aspectFit" style="width: 40rpx;height: 40rpx;"></image>
 				</view>
 				<view class="options">
-					<label>
-						<checkbox /><text>进入危险区域</text>
-					</label>
+					<view class="checkBox">
+						<label style="display: flex;align-items: center; margin: 0;">
+							<checkbox /><text>进入危险区域</text>
+						</label>
+					</view>
 				</view>
 			  </view>
 		</view>
@@ -136,6 +139,8 @@
 </template>
 
 <script>
+	import moment from "moment";
+	import {throttle} from 'lodash'
 export default {
   data() {
     return {
@@ -200,27 +205,32 @@ export default {
   },
   methods:{
 	  start(e) {
-	        console.log(e.touches[0]);
-	        let x = e.touches[0].y;
-	        let y = e.touches[0].x;
+		  
+	        console.log("startE",e.touches[0]);
+	        let x = e.touches[0].x;
+	        let y = e.touches[0].y;
+			/* let x = e.touches[0].y;
+			let y = e.touches[0].x; */
 	        this.startPoint.x = x;
 	        this.startPoint.y = y;
 	        console.log(this.startPoint);
 	        this.painting = true;
+			this.ctx.lineWidth = 1;
+			this.ctx.beginPath();
 	        this.borData = {
 	          maxX: x,
 	          minX: x,
 	          maxY: y,
 	          minY: y,
 	        };
-	        console.log(this.borData);
+	        console.log("start",this.borData);
 	      },
 	      move(e) {
-	        console.log(e.touches[0]);
+	        console.log("e",e.touches[0]);
 	        let x = e.touches[0].x;
 	        let y = e.touches[0].y;
 	        let newPoint = { x: x, y: y };
-	        const throttlePush = throttle(this.push, 300);
+	        const throttlePush = throttle(this.push, 500);
 	        if (this.painting) {
 	          this.drawLine(
 	            this.startPoint.x,
@@ -234,11 +244,6 @@ export default {
 	      },
 	      stop() {
 	        this.painting = false;
-	        setTimeout(() => {
-	          this.ctx.clearRect(0, 0, 224, 224);
-	          console.log("bye");
-	        });
-	        console.log(this.borData);
 	        this.border.push({
 	          width: this.borData.maxX - this.borData.minX,
 	          height: this.borData.maxY - this.borData.minY,
@@ -246,7 +251,12 @@ export default {
 	          top: this.borData.minY,
 	          left: this.borData.minX,
 	        });
-	        console.log(this.border);
+			console.log("@date",this.borData)
+			console.log("@bordate",this.border);
+			this.ctx.stroke();
+			this.ctx.closePath();
+			this.borData = {};
+	        console.log('end');
 	      },
 	      push(newPoint) {
 	        this.borData.maxX = Math.max(newPoint.x, this.borData.maxX);
@@ -256,12 +266,8 @@ export default {
 	      },
 	      drawLine(xStart, yStart, xEnd, yEnd) {
 	        console.log(xStart);
-	        this.ctx.beginPath();
-	        this.ctx.lineWidth = 3;
 	        this.ctx.moveTo(xStart, yStart);
 	        this.ctx.lineTo(xEnd, yEnd);
-	        this.ctx.stroke();
-	        this.ctx.closePath();
 	        this.ctx.draw();
 	      },
   },
@@ -517,6 +523,10 @@ export default {
 		  	height: 246px;
 		  	background-color: pink;
 			position: relative;
+			.border{
+				border: 1px solid red;
+				position: absolute;
+			}
 		  }
 		  .edit{
 			  width: 100%;
@@ -530,6 +540,7 @@ export default {
 			  }
 		  }
 		  .options{
+			  width: 100%;
 			  .checkBox{
 				  border: 1px solid #dfdfdf;
 				  width: 60%;
@@ -537,6 +548,8 @@ export default {
 				  align-items: center;
 				  margin: 0;
 				  border-radius: 10rpx;
+				  margin: 0;
+				  // background: none;
 				  // padding: 2rpx 4rpx;
 			  }
 		  }
