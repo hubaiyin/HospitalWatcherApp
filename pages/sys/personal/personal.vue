@@ -46,7 +46,7 @@
 							<image src="../../../static/arrow-right.png" mode="aspectFit"></image>
 						</view>
 					</view>
-					<view class="items">
+					<view class="items" @tap="jump('/pages/sys/personal/edit/edit')">
 						<view class="left">
 							<view class="img">
 								<image src="../../../static/f810fcf9-a1b3-43f2-b2c4-55a7ce72c064.png" mode="aspectFit"></image>
@@ -181,7 +181,16 @@
 				box-sizing: border-box;
 				.left{
 					display: flex;
+					width: 80%;
 					align-items: center;
+					.text{
+						margin-left: 16rpx;
+						color: #8496B0;
+						font-weight: bold;
+						font-size: 36rpx;
+						display: flex;
+						align-items: center;
+					}
 				}
 				.img{
 					height: 46rpx;
@@ -191,12 +200,7 @@
 						width: 100%;
 					}
 				}
-				.text{
-					margin-left: 16rpx;
-					color: #8496B0;
-					font-weight: bold;
-					font-size: 36rpx;
-				}
+				
 			}
 		}
 	}
