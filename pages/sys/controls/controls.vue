@@ -89,8 +89,13 @@
     </view>
 	<u-modal :show="showEdit" :closeOnClickOverlay="true" :showCancelButton="true" @confirm="showEdit=false" @cancel="showEdit=false" @close="showEdit=false" width="348px">
 		<view class="informBox">
-			<view class="title">
-				{{warnData[0].name}}
+			<view class="titleBox">
+				<view class="title">
+					{{warnData[0].name}}
+				</view>
+				<view class="img" @tap="locked = !locked">
+					<image :src="locked?lockImg[0]:lockImg[1]" mode="aspectFit"></image>
+				</view>
 			</view>
 			  <view class="video">
 			  	<video src="" style="height: 100%;width: 100%;object-fit: fill;"></video>
@@ -115,10 +120,9 @@
 					  @touchstart="start"
 					  @touchmove="move"
 					  @touchend="stop"
-					  :disable-scroll="true"
+					  :disable-scroll="!locked"
 					  ></canvas>
 					<view class="border" v-for="(box) in border" :key="box.id" :style="{width:box.width+'px',height:box.height+'px',top:box.top+'px',left:box.left+'px'}">
-						
 					</view>
 			  	</view>
 				<view class="edit">
@@ -126,11 +130,20 @@
 					<image src="../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png" mode="aspectFit" style="width: 40rpx;height: 40rpx;"></image>
 				</view>
 				<view class="options">
-					<view class="checkBox">
-						<label style="display: flex;align-items: center; margin: 0;">
-							<checkbox /><text>进入危险区域</text>
-						</label>
-					</view>
+					<u-checkbox-group
+					    v-model="checkboxValue1"
+					    placement="column"
+					    @change="checkboxChange"
+					>
+					    <u-checkbox
+					        :customStyle="{marginBottom: '8px'}"
+					        v-for="(item, index) in checkboxList1"
+					        :key="index"
+					        :label="item.name"
+					        :name="item.name"
+					    >
+					    </u-checkbox>
+					</u-checkbox-group>
 				</view>
 			  </view>
 		</view>
@@ -144,6 +157,8 @@
 export default {
   data() {
     return {
+		lockImg:['../../../static/lock.png','../../../static/unlock.png'],
+		locked:true,
 	startPoint: {
 	    x: null,
 	    y: null,
@@ -157,7 +172,6 @@ export default {
       working: 19,
       longitude: 0,
       latitude: 0,
-      isGet: 0,
       isShow: false,
 	  showDelete:false,
 	  showEdit:false,
@@ -201,12 +215,23 @@ export default {
 	    "../../../static/20230910-194834.png",
 	    "../../../static/20230910-194949.png",
 	  ],
+	  checkboxValue1:[],
+		// 基本案列数据
+		checkboxList1: [{
+				name: '苹果',
+			},
+			{
+				name: '香蕉',
+			},
+			{
+				name: '橙子',
+			}
+		],
     };
   },
   methods:{
 	  start(e) {
-		  
-	        console.log("startE",e.touches[0]);
+		  if(this.locked) return
 	        let x = e.touches[0].x;
 	        let y = e.touches[0].y;
 			/* let x = e.touches[0].y;
@@ -215,66 +240,48 @@ export default {
 	        this.startPoint.y = y;
 	        console.log(this.startPoint);
 	        this.painting = true;
-			this.ctx.lineWidth = 1;
-			this.ctx.beginPath();
 	        this.borData = {
 	          maxX: x,
 	          minX: x,
 	          maxY: y,
 	          minY: y,
 	        };
-	        console.log("start",this.borData);
 	      },
-	      move(e) {
-	        console.log("e",e.touches[0]);
-	        let x = e.touches[0].x;
-	        let y = e.touches[0].y;
-	        let newPoint = { x: x, y: y };
-	        const throttlePush = throttle(this.push, 500);
-	        if (this.painting) {
-	          this.drawLine(
-	            this.startPoint.x,
-	            this.startPoint.y,
-	            newPoint.x,
-	            newPoint.y
-	          );
-	          this.startPoint = newPoint;
-	          throttlePush(newPoint);
-	        }
-	      },
-	      stop() {
-	        this.painting = false;
-	        this.border.push({
-	          width: this.borData.maxX - this.borData.minX,
-	          height: this.borData.maxY - this.borData.minY,
-	          id: moment().format("MMMM Do YYYY, h:mm:ss a"),
-	          top: this.borData.minY,
-	          left: this.borData.minX,
-	        });
-			console.log("@date",this.borData)
-			console.log("@bordate",this.border);
-			this.ctx.stroke();
-			this.ctx.closePath();
-			this.borData = {};
-	        console.log('end');
-	      },
-	      push(newPoint) {
-	        this.borData.maxX = Math.max(newPoint.x, this.borData.maxX);
-	        this.borData.minX = Math.min(newPoint.x, this.borData.minX);
-	        this.borData.maxY = Math.max(newPoint.y, this.borData.maxY);
-	        this.borData.minY = Math.min(newPoint.y, this.borData.minY);
-	      },
-	      drawLine(xStart, yStart, xEnd, yEnd) {
-	        console.log(xStart);
-	        this.ctx.moveTo(xStart, yStart);
-	        this.ctx.lineTo(xEnd, yEnd);
-	        this.ctx.draw();
-	      },
+	move(e) {
+	  if(this.locked) return
+	  console.log("e",e.touches[0]);
+	  let x = e.touches[0].x;
+	  let y = e.touches[0].y;
+	  let newPoint = { x: x, y: y };
+	  const throttlePush = throttle(this.push, 500);
+	  if (this.painting) {
+	    this.startPoint = newPoint;
+	    throttlePush(newPoint);
+	  }
+	},
+	stop() {
+	  if(this.locked) return
+	  this.painting = false;
+	  this.border.push({
+	    width: this.borData.maxX - this.borData.minX,
+	    height: this.borData.maxY - this.borData.minY,
+	    id: moment().format("MMMM Do YYYY, h:mm:ss a"),
+	    top: this.borData.minY,
+	    left: this.borData.minX,
+	  });
+	this.borData = {};
+	  console.log('end');
+	},
+	push(newPoint) {
+	  this.borData.maxX = Math.max(newPoint.x, this.borData.maxX);
+	  this.borData.minX = Math.min(newPoint.x, this.borData.minX);
+	  this.borData.maxY = Math.max(newPoint.y, this.borData.maxY);
+	  this.borData.minY = Math.min(newPoint.y, this.borData.minY);
+	},
+	checkboxChange(n) {
+	    console.log('change', n);
+	}
   },
-  onReady: function () {
-      this.ctx = uni.createCanvasContext("myCanvas");
-      console.log(this.ctx);
-    },
   onLoad() {
     this.safeHeight = uni.getWindowInfo().safeArea.height;
     console.log(this.safeHeight);
@@ -501,9 +508,24 @@ export default {
 	  display: flex;
 	  flex-direction: column;
 	  align-items: center;
-	  .title{
-	  	font-size: 36rpx;
-	  	font-weight: bold;
+	  .titleBox{
+		  width: 100%;
+		  display: flex;
+		  justify-content: space-between;
+		  align-items: center;
+		  padding-bottom: 10rpx;
+		  .title{
+		  	font-size: 38rpx;
+		  	font-weight: bold;
+		  }
+		  .img{
+			  width: 48rpx;
+			  height: 48rpx;
+			  image{
+				  height: 100%;
+				  width: 100%;
+			  }
+		  }
 	  }
 	  .video {
 	    display: flex;
@@ -541,17 +563,6 @@ export default {
 		  }
 		  .options{
 			  width: 100%;
-			  .checkBox{
-				  border: 1px solid #dfdfdf;
-				  width: 60%;
-				  display: flex;
-				  align-items: center;
-				  margin: 0;
-				  border-radius: 10rpx;
-				  margin: 0;
-				  // background: none;
-				  // padding: 2rpx 4rpx;
-			  }
 		  }
 	  }
 	  
