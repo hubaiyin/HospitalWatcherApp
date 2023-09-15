@@ -4,13 +4,6 @@
 			<view class="backImg">
 				<view class="title">
 					<h2>个人中心</h2>
-					<view class="setting">
-					  <image
-					    src="../../../static/setting.png"
-					    mode="aspectFit"
-					    alt=""
-					  ></image>
-					</view>
 				</view>
 			  <image
 			    src="../../../static/d53eb072-3395-4bc6-9dd1-41b32cc61095.png"

@@ -3,7 +3,7 @@
     <view :style="{ height: safeAreaTop + 'px' }" class="warnBox" id="warnBox">
       <view class="title">
         <h2>报警事件列表</h2>
-        <view class="icon">
+        <view class="icon" @tap="jump">
           <image
             src="../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png"
             mode="aspectFit"
@@ -11,87 +11,93 @@
           ></image>
         </view>
       </view>
-      <view class="search">
-        <view class="iconBox">
-          <image
-            src="../../../static/169f89a4-60bc-4983-bef6-6a34b21b3e39.png"
-            mode="aspectFit"
-            class="icon"
-          ></image>
-        </view>
-        <input class="input" type="text" placeholder="精神科室 摔倒..." />
-        <button class="btn">搜索</button>
-      </view>
-      <view class="options">
-        <view class="selector" @tap="showFilter = true">
-          <view class="icon">
-            <image
-              src="../../../static/7d163ad9-885d-47cb-a29e-043e5a9933ac.png"
-              mode="aspectFit"
-              class="img"
-            ></image>
-          </view>
-          <u-picker
-            :show="showFilter"
-            :columns="filters"
-            class="select"
-            @confirm="setFilter"
-            @cancel="showFilter = false"
-          ></u-picker>
-          <view class="timeText">
-            {{ formatTime }}
-          </view>
-        </view>
-        <view class="selector" @tap="showStatus = true">
-          <view class="icon">
-            <image
-              src="../../../static/5de7d537-e96d-4269-ad0a-684f3443643d.png"
-              mode="aspectFit"
-              class="img"
-            ></image>
-          </view>
-          <u-picker
-            :show="showStatus"
-            :columns="status"
-            class="select"
-            @confirm="setStatus"
-            @cancel="showStatus = false"
-          ></u-picker>
-          <view class="timeText">
-            {{ formatTime }}
-          </view>
-        </view>
-        <view class="selector" @tap="show = true">
-          <view class="icon">
-            <image
-              src="../../../static/563aa794-f528-4ab0-8b23-4e3aff0adf48.png"
-              mode="aspectFit"
-              class="img"
-            ></image>
-          </view>
-          <u-datetime-picker
-            class="date"
-            :show="show"
-            v-model="time"
-            mode="datetime"
-            @confirm="setTime"
-            @cancel="show = false"
-            :closeOnClickOverlay="true"
-			@close="show=false"
-          >
-          </u-datetime-picker>
-          <view class="timeText">
-            {{ formatTime }}
-          </view>
-        </view>
-        <view class="icon">
-          <image
-            src="../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png"
-            mode="aspectFit"
-            class="img"
-          ></image>
-        </view>
-      </view>
+      <view class="second">
+      	<view class="options">
+			<view class="selector" @tap="showFilter = true">
+			  <view class="icon">
+			    <image
+			      src="../../../static/7d163ad9-885d-47cb-a29e-043e5a9933ac.png"
+			      mode="aspectFit"
+			      class="img"
+			    ></image>
+			  </view>
+			  <u-picker
+			    :show="showFilter"
+			    :columns="filters"
+			    class="select"
+			    @confirm="setFilter"
+			    @cancel="showFilter = false"
+			  ></u-picker>
+			  <view class="timeText">
+			    {{ formatTime }}
+			  </view>
+			</view>
+      	    <view class="selector" @tap="showFilter = true">
+      	      <view class="icon">
+      	        <image
+      	          src="../../../static/7d163ad9-885d-47cb-a29e-043e5a9933ac.png"
+      	          mode="aspectFit"
+      	          class="img"
+      	        ></image>
+      	      </view>
+      	      <u-picker
+      	        :show="showFilter"
+      	        :columns="filters"
+      	        class="select"
+      	        @confirm="setFilter"
+      	        @cancel="showFilter = false"
+      	      ></u-picker>
+      	      <view class="timeText">
+      	        {{ formatTime }}
+      	      </view>
+      	    </view>
+      	    <view class="selector" @tap="showStatus = true">
+      	      <view class="icon">
+      	        <image
+      	          src="../../../static/5de7d537-e96d-4269-ad0a-684f3443643d.png"
+      	          mode="aspectFit"
+      	          class="img"
+      	        ></image>
+      	      </view>
+      	      <u-picker
+      	        :show="showStatus"
+      	        :columns="status"
+      	        class="select"
+      	        @confirm="setStatus"
+      	        @cancel="showStatus = false"
+      	      ></u-picker>
+      	      <view class="timeText">
+      	        {{ formatTime }}
+      	      </view>
+      	    </view>
+      	    <view class="selector" @tap="show = true">
+      	      <view class="icon">
+      	        <image
+      	          src="../../../static/563aa794-f528-4ab0-8b23-4e3aff0adf48.png"
+      	          mode="aspectFit"
+      	          class="img"
+      	        ></image>
+      	      </view>
+      	      <u-datetime-picker
+      	        class="date"
+      	        :show="show"
+      	        v-model="time"
+      	        mode="datetime"
+      	        @confirm="setTime"
+      	        @cancel="show = false"
+      	        :closeOnClickOverlay="true"
+      			@close="show=false"
+      	      >
+      	      </u-datetime-picker>
+      	      <view class="timeText">
+      	        {{ formatTime }}
+      	      </view>
+      	    </view>
+      	  </view>
+		<view class="icons">
+			<image src="../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png" mode="aspectFit" class="img"></image>
+		</view>
+	  </view>
       <scroll-view
         class="content"
         scroll-y="true"
@@ -105,7 +111,7 @@
             <view class="event">
               {{ item.eventName }}
             </view>
-            <view :class="item.level >= 4 ? 'level1' : 'level2'">
+            <view :class="item.level >= 3 ? 'level3' : item.level === 2? 'level2':'level1'">
               {{ item.level }}级
             </view>
           </view>
@@ -204,7 +210,7 @@
 			<view class="contents">
 			  <view class="line">
 			    <view class="column left"> 状态 </view>
-			    <view class="column right dealt">
+			    <view class="column right" :class="warnData[0].deal === '已处理'?'dealt':'unDealt' ">
 			      {{ warnData[0].deal }}
 			    </view>
 			  </view>
@@ -335,7 +341,7 @@ export default {
           name: "智能摄像头-1",
           eventName: "进入危险区域",
           level: 5,
-          time: "2023-09-25 22:10",
+          time: "09-25 22:10",
           department: "急诊部",
           deal: "已处理",
           content: "加强培训",
@@ -345,7 +351,7 @@ export default {
           name: "智能摄像头-3",
           eventName: "摔倒",
           level: 1,
-          time: "2023-09-24 22:14",
+          time: "09-24 22:14",
           department: "精神科",
           deal: "未处理",
           content: "迅速前去查看情况",
@@ -355,7 +361,7 @@ export default {
           name: "智能摄像头-1",
           eventName: "进入危险区域",
           level: 5,
-          time: "2023-09-24 22:10",
+          time: "09-24 22:10",
           department: "急诊部",
           deal: "已处理",
           content: "加强培训",
@@ -365,7 +371,7 @@ export default {
           name: "智能摄像头-2",
           eventName: "吸烟",
           level: 2,
-          time: "2023-09-26 22:14",
+          time: "09-26 22:14",
           department: "急诊部",
           deal: "已处理",
           content: "进行劝导",
@@ -418,6 +424,11 @@ export default {
     setStatus(e) {
       this.showStatus = false;
     },
+	jump(){
+		uni.navigateTo({
+			url:'/pages/sys/personal/setting/setting'
+		})
+	}
   },
 };
 </script>
@@ -465,100 +476,71 @@ export default {
       }
     }
   }
-  .search {
-    margin-bottom: 3%;
-    border: 1px solid #ebebeb;
-    display: flex;
-    border-radius: 15rpx;
-    overflow: hidden;
-    .iconBox {
-      height: 80rpx;
-      width: 80rpx;
-      border-radius: 15rpx 0 0 15rpx;
-      background-color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      .icon {
-        height: 50%;
-        width: 50%;
-      }
-    }
-    .input {
-      width: 420rpx;
-      height: 80rpx;
-      background-color: #fff;
-      border-radius: 0 15rpx 15rpx 0;
-      box-sizing: border-box;
-      padding: 16rpx;
-    }
-    .btn {
-      flex: 1;
-      height: 80rpx;
-      background-color: #9eb3ff;
-      color: #e9e7fd;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      // border-radius: 0 15rpx 15rpx 0;
-    }
-  }
-  .options {
-    margin-bottom: 3%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .selector {
-      border-radius: 12rpx;
-      position: relative;
-      width: 29%;
-      border: 1px solid #eaeaea;
-      box-sizing: border-box;
-      height: 70rpx;
-      padding: 12rpx;
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      .select {
-        background-color: #fff;
-        border: none;
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        flex: 1;
-      }
-      .icon {
-        width: 32rpx;
-        height: 32rpx;
-        display: flex;
-        align-items: center;
-        .img {
-          height: 100%;
-          width: 100%;
-        }
-      }
-      .date {
-        flex: 1;
-        height: 100%;
-        // background: #000;
-      }
-      .timeText {
-        font-size: 19rpx;
-        position: absolute;
-        right: 2%;
-        color: #b5b5b5;
-      }
-    }
-    .icon {
-      width: 40rpx;
-      height: 40rpx;
-      display: flex;
-      align-items: center;
-      .img {
-        height: 100%;
-        width: 100%;
-      }
-    }
+
+  .second{
+	  width: 100%;
+	  display: flex;
+	  align-items: flex-end;
+	  justify-content: space-between;
+	  margin-bottom: 12rpx;
+	  .icons {
+	    width: 56rpx;
+	    height: 56rpx;
+		margin-bottom: 26rpx;
+	    .img {
+	      height: 100%;
+	      width: 100%;
+	    }
+	  }
+	  .options {
+	    display: flex;
+	    align-items: center;
+	    justify-content: space-between;
+		flex-wrap: wrap;
+	  	width: 90%;
+	    .selector {
+	      border-radius: 12rpx;
+	      position: relative;
+	      width: 49%;
+	      border: 1px solid #eaeaea;
+	      box-sizing: border-box;
+	      height: 88rpx;
+	      padding: 12rpx;
+	      box-sizing: border-box;
+	      display: flex;
+	      align-items: center;
+		  margin-bottom: 10rpx;
+	      .select {
+	        background-color: #fff;
+	        border: none;
+	        padding: 0;
+	        margin: 0;
+	        height: 100%;
+	        flex: 1;
+	      }
+	      .date {
+	        flex: 1;
+	        height: 100%;
+	        // background: #000;
+	      }
+	      .timeText {
+	        font-size: 28rpx;
+	        position: absolute;
+	        right: 4%;
+	        color: #b5b5b5;
+	      }
+	    }
+	    .icon {
+	      width: 46rpx;
+	      height: 46rpx;
+	      display: flex;
+	      align-items: center;
+	      .img {
+	        height: 100%;
+	        width: 100%;
+	      }
+	    }
+	  }
   }
   .content {
     flex: 1;
@@ -592,12 +574,15 @@ export default {
           color: black;
           margin-right: 16rpx;
         }
-        .level1 {
+        .level3 {
           color: #ff5d5d;
         }
         .level2 {
           color: #ff8a01;
         }
+		.level1{
+			color: #0184FF;
+		}
       }
       .positonAndtime {
         position: absolute;
@@ -607,7 +592,7 @@ export default {
         align-items: baseline;
         .time {
           font-size: 28rpx;
-          margin-right: 8rpx;
+          margin-right: 16rpx;
         }
         .position {
           font-size: 34rpx;
@@ -687,6 +672,9 @@ export default {
 	  	  .dealt{
 	  		  color: #06bfa1;
 	  	  }
+		  .unDealt{
+			  color: #FF5D5D;
+		  }
 	    }
 		.textarea{
 			border: 1px solid  #b0b1b1;

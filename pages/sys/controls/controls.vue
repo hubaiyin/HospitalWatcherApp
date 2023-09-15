@@ -16,7 +16,7 @@
             </span>
           </view>
         </view>
-        <view class="setting">
+        <view class="setting" @tap="jump">
           <image
             src="../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png"
             mode="aspectFit"
@@ -69,9 +69,9 @@
 			  	<span style="color: #6787F9">
 			  		编辑</span>
 			  </view>｜<view class="button" @click="showDelete = true">
-			  	<image src="../../../static/rubbish.png" mode="aspectFit" style="height: 22px; width: 22px;"></image>
-			  	<span style="color: #FF5D5D" >
-			  		删除</span>
+			  	<image :src="!item.running?'../../../static/shutup.png':'../../../static/rubbish.png'" mode="aspectFit" style="height: 22px; width: 22px;"></image>
+			  	<span :style="{color: item.running?'#FF5D5D':'#6787F9'}" >
+			  		{{item.running?'停用':'启用'}}</span>
 			  </view>
           </view>
           <view :class="item.deal === '正在运行' ? 'isDealt' : 'unDealt'">
@@ -87,86 +87,17 @@
         </view>
       </scroll-view>
     </view>
-	<u-modal :show="showEdit" :closeOnClickOverlay="true" :showCancelButton="true" @confirm="showEdit=false" @cancel="showEdit=false" @close="showEdit=false" width="348px">
-		<view class="informBox">
-			<view class="titleBox">
-				<view class="title">
-					{{warnData[0].name}}
-				</view>
-				<view class="img" @tap="locked = !locked">
-					<image :src="locked?lockImg[0]:lockImg[1]" mode="aspectFit"></image>
-				</view>
-			</view>
-			  <view class="video">
-			  	<video src="" style="height: 100%;width: 100%;object-fit: fill;"></video>
-			  </view>
-			  <view class="scroll">
-				  <view class="edit">
-				  	<span>编辑区</span>
-					<image src="../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png" mode="aspectFit" style="width: 40rpx;height: 40rpx;"></image>
-				  </view>
-			  	<view class="img">
-					<canvas
-					  canvas-id="myCanvas"
-					  style="
-					    margin: 0 auto;
-						position: absolute;
-						top: 0;
-						left: 0;
-						z-index: 10;
-					  "
-					  :style="{height: 246+'px',
-					    width: 328+'px'}"
-					  @touchstart="start"
-					  @touchmove="move"
-					  @touchend="stop"
-					  :disable-scroll="!locked"
-					  ></canvas>
-					<view class="border" v-for="(box) in border" :key="box.id" :style="{width:box.width+'px',height:box.height+'px',top:box.top+'px',left:box.left+'px'}">
-					</view>
-			  	</view>
-				<view class="edit">
-					<span>编辑区</span>
-					<image src="../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png" mode="aspectFit" style="width: 40rpx;height: 40rpx;"></image>
-				</view>
-				<view class="options">
-					<u-checkbox-group
-					    v-model="checkboxValue1"
-					    placement="column"
-					    @change="checkboxChange"
-					>
-					    <u-checkbox
-					        :customStyle="{marginBottom: '8px'}"
-					        v-for="(item, index) in checkboxList1"
-					        :key="index"
-					        :label="item.name"
-					        :name="item.name"
-					    >
-					    </u-checkbox>
-					</u-checkbox-group>
-				</view>
-			  </view>
-		</view>
-	</u-modal>
+	<Edit :showEdit="showEdit" @change="changeShow" :warnData="warnData" ></Edit>
   </view>
 </template>
 
 <script>
-	import moment from "moment";
-	import {throttle} from 'lodash'
+import Edit from './components/edit.vue'
 export default {
+	components:{Edit},
   data() {
     return {
-		lockImg:['../../../static/lock.png','../../../static/unlock.png'],
-		locked:true,
-	startPoint: {
-	    x: null,
-	    y: null,
-	},
-	  border: [],
-	  borData: {},
-	  ctx: null,
-	  painting: false,
+		showEdit:false,
       safeHeight: 0,
       total: 20,
       working: 19,
@@ -174,7 +105,6 @@ export default {
       latitude: 0,
       isShow: false,
 	  showDelete:false,
-	  showEdit:false,
       choosen: 2,
       scrollHeight: 0,
 	  warnData: [
@@ -184,7 +114,10 @@ export default {
 	      deal: "正在运行",
 		  number:'A104',
 		  department:'急诊科走廊',
-		  leader:'沛沛'
+		  leader:'沛沛',
+		  running:true,
+		  border: [],
+		  video:''
 	    },
 	    {
 	      id: "114514",
@@ -192,7 +125,10 @@ export default {
 	      deal: "停用",
 		  number:'A102',
 		  department:'急诊部',
-		  leader:'潇迪'
+		  leader:'潇迪',
+		  running:false,
+		  border: [],
+		  video:''
 	    },
 	    {
 	      id: "191919",
@@ -200,7 +136,20 @@ export default {
 	      deal: "正在运行",
 		  number:'A103',
 		  department:'精神科',
-		  leader:'轩轩'
+		  leader:'轩轩',
+		  running:true,
+		  border: [{
+			  id:'',
+			  width:128,
+			  height:244,
+			  top:12,
+			  left:33,
+			  right:161,
+			  bottom:256
+		  }],
+		  video:'',
+		  img:'',
+		  ability:[]
 	    },
 	    {
 	      id: "2203",
@@ -208,79 +157,29 @@ export default {
 	      deal: "停用",
 		  number:'A101',
 		  department:'大厅',
-		  leader:'阿为'
+		  leader:'阿为',
+		  running:false,
+		  border: [],
+		  video:''
 	    },
 	  ],
 	  dealIcon: [
 	    "../../../static/20230910-194834.png",
 	    "../../../static/20230910-194949.png",
 	  ],
-	  checkboxValue1:[],
-		// 基本案列数据
-		checkboxList1: [{
-				name: '苹果',
-			},
-			{
-				name: '香蕉',
-			},
-			{
-				name: '橙子',
-			}
-		],
+	  
     };
   },
   methods:{
-	  start(e) {
-		  if(this.locked) return
-	        let x = e.touches[0].x;
-	        let y = e.touches[0].y;
-			/* let x = e.touches[0].y;
-			let y = e.touches[0].x; */
-	        this.startPoint.x = x;
-	        this.startPoint.y = y;
-	        console.log(this.startPoint);
-	        this.painting = true;
-	        this.borData = {
-	          maxX: x,
-	          minX: x,
-	          maxY: y,
-	          minY: y,
-	        };
-	      },
-	move(e) {
-	  if(this.locked) return
-	  console.log("e",e.touches[0]);
-	  let x = e.touches[0].x;
-	  let y = e.touches[0].y;
-	  let newPoint = { x: x, y: y };
-	  const throttlePush = throttle(this.push, 500);
-	  if (this.painting) {
-	    this.startPoint = newPoint;
-	    throttlePush(newPoint);
+	  changeShow(){
+		  console.log('被触发了')
+		  this.showEdit = false;
+	  },
+	  jump(){
+		  uni.navigateTo({
+		  	url:'/pages/sys/personal/setting/setting'
+		  })
 	  }
-	},
-	stop() {
-	  if(this.locked) return
-	  this.painting = false;
-	  this.border.push({
-	    width: this.borData.maxX - this.borData.minX,
-	    height: this.borData.maxY - this.borData.minY,
-	    id: moment().format("MMMM Do YYYY, h:mm:ss a"),
-	    top: this.borData.minY,
-	    left: this.borData.minX,
-	  });
-	this.borData = {};
-	  console.log('end');
-	},
-	push(newPoint) {
-	  this.borData.maxX = Math.max(newPoint.x, this.borData.maxX);
-	  this.borData.minX = Math.min(newPoint.x, this.borData.minX);
-	  this.borData.maxY = Math.max(newPoint.y, this.borData.maxY);
-	  this.borData.minY = Math.min(newPoint.y, this.borData.minY);
-	},
-	checkboxChange(n) {
-	    console.log('change', n);
-	}
   },
   onLoad() {
     this.safeHeight = uni.getWindowInfo().safeArea.height;
@@ -487,7 +386,7 @@ export default {
 	      position: absolute;
 	      top: 18rpx;
 	      right: 20rpx;
-	      color: #f09035;
+	      color: #FF5D5D;
 	      display: flex;
 	      align-items: center;
 	      .img {
@@ -503,69 +402,5 @@ export default {
 	  }
   }
 }
-.informBox{
-	  width: 100%;
-	  display: flex;
-	  flex-direction: column;
-	  align-items: center;
-	  .titleBox{
-		  width: 100%;
-		  display: flex;
-		  justify-content: space-between;
-		  align-items: center;
-		  padding-bottom: 10rpx;
-		  .title{
-		  	font-size: 38rpx;
-		  	font-weight: bold;
-		  }
-		  .img{
-			  width: 48rpx;
-			  height: 48rpx;
-			  image{
-				  height: 100%;
-				  width: 100%;
-			  }
-		  }
-	  }
-	  .video {
-	    display: flex;
-	    justify-content: center;
-	    align-items: center;
-	  	width: 328px;
-	  	height: 246px;
-	  }
-	  .scroll{
-		  margin-top: 10px;
-		  height: 246px;
-		  overflow: auto;
-		  width: 328px;
-		  
-		  .img{
-		  	width:  328px;
-		  	height: 246px;
-		  	background-color: pink;
-			position: relative;
-			.border{
-				border: 1px solid red;
-				position: absolute;
-			}
-		  }
-		  .edit{
-			  width: 100%;
-			  height: 48rpx;
-			  display: flex;
-			  align-items: center;
-			  justify-content: space-between;
-			  span{
-				  font-size: 34rpx;
-				  font-weight: bold;
-			  }
-		  }
-		  .options{
-			  width: 100%;
-		  }
-	  }
-	  
-	  
-  }
+
 </style>

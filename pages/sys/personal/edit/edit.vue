@@ -36,9 +36,9 @@
 							<view class="text">
 								用户名
 							</view>
-							<input v-model="userName" type="text" style="font-weight: bold; width: 50%;">
+							<input v-model="userName" type="text" style="font-weight: bold; width: 50%;" :focus="focus">
 						</view>
-						<view class="img">
+						<view class="img" @click="showInput">
 							<image src="../../../../static/edit-none.png" mode="aspectFit"></image>
 						</view>
 					</view>
@@ -105,7 +105,8 @@
 				showSex:false,
 				columns:[['男','女']],
 				oldPassword:'',
-				newPassword:''
+				newPassword:'',
+				focus:false
 			};
 		},
 		onLoad(){
@@ -115,6 +116,16 @@
 			back(){
 				uni.navigateBack();
 			},
+			showInput(){
+			        this.focus = true;
+			        // 获取软键盘的高度
+			        uni.onKeyboardHeightChange(res => {
+			          console.log(res.height);
+			          if(res.height === 0){
+			              this.focus = false;
+			          }
+			        })
+			      },
 		}
 	}
 </script>
