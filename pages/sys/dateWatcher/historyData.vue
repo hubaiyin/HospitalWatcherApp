@@ -4,69 +4,67 @@
             <view class="text">
                 <span>请选择时间范围</span>
             </view>
-            <view class="select">
-                <view class="btn" @click="onShowDatePicker('rangetime')">{{rangetime[0]}} - {{rangetime[1]}}</view>
-                <mx-date-picker :show="showPicker" :type="type" :value="value" :show-tips="true" :begin-text="'开始'"
-                :end-text="'结束'" :show-seconds="true" @confirm="onSelected" @cancel="onSelected" />
+            <view class="date">
+                <view class="selector" @tap="showFilter = true">
+                    <view class="icon">
+                        <image
+                        src="../../../static/7d163ad9-885d-47cb-a29e-043e5a9933ac.png"
+                        mode="aspectFit"
+                        class="img"
+                        ></image>
+                    </view>
+                    <u-picker
+                        :show="showFilter"
+                        :columns="filters"
+                        class="select"
+                        @confirm="setFilter"
+                        @cancel="showFilter = false"
+                    ></u-picker>
+                    <view class="innerText">
+                        {{ range }}
+                    </view>
+                    <div class="triangle">▼</div>
+                </view>
             </view>
         </view>
         <view class="first">
-
+            <div class="line">
+                <line-chart></line-chart>
+            </div>
         </view>
         <view class="second">
-
+            <div class="line">
+                <line-chart></line-chart>
+            </div>
         </view>
         <view class="third">
-
+            <div class="line">
+                <line-chart></line-chart>
+            </div>
         </view>
     </view>
 </template>
 
 <script>
+import lineChart from '../../../components/lineChart.vue';
 	// import ringChart from '../../../components/ringChart.vue';
-    import MxDatePicker from "@/components/mx-datepicker/mx-datepicker.vue";
 	export default {
-		components:{ MxDatePicker },
+        components:{ lineChart },
 		data() {  
 			return {
-                date: '2019/01/01',
-                time: '15:00:12',
-                datetime: '2019/01/01 15:00:12',
-                range: [],
-                rangetime: ['2019/01/08 14:00', '2019/01/16 13:59'],
-                type: 'rangetime',
-                value: '',
-                showPicker:false
+                showFilter: false,
+                filters: [["近一天", "近三天", "近一周"]],
+                range:'近一天',
 			};
 		},
         methods:{
-            // setTime(e) {
-            //     const timeFormat = uni.$u.timeFormat;
-            //     this.show = false;
-            //     this.time = e.value;
-            //     this.formatTime = timeFormat(e.value, "yyyy-mm-dd hh:MM");
-            // },
-            onShowDatePicker(type) { //显示
-                console.log(JSON.stringify(type))
-                this.type = type;
-                this.showPicker = true;
-                this.value = this[type];
+            setFilter(e) {
+                this.showFilter = false;
+                this.range = e.value[0];
             },
-            onSelected(e) { //选择
-                console.log(JSON.stringify(e))
-                this.showPicker = false;
-                if (e) {
-                    this[this.type] = e.value;
-                    //选择的值
-                    console.log('value => ' + e.value);
-                    //原始的Date对象
-                    console.log('date => ' + e.date);
-                }
-            }
         },
         onLoad(){
-            const timeFormat = uni.$u.timeFormat;
-            this.formatTime = timeFormat(this.time, "yyyy-mm-dd hh:MM");
+
         }
 	}
 </script>
@@ -74,30 +72,63 @@
 <style lang="scss" scoped>
     .body {
         height: 95%;
-        border: 2px solid red;
+        // border: 2px solid red;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-around;
         .dateSelect {
-            // height: 6%;
+            // border: 2px solid blue;
+            height: 6%;
             width: 98%;
-            border: 2px solid blue;
             display: flex;
             align-items: center;
-            .select {
-                border: 1px solid #c7c7c7;
+            .text {
+                // border: 2px solid red;
+            }
+            .date {
+                border: 1.5px solid #AAAAAA;
+                position: relative;
+                border-radius: 15rpx;
+                width: 30%;
+                height: 60%;
                 margin-left: 20rpx;
-                border-radius: 10rpx;
-                padding: 10rpx;
                 display: flex;
-                // height: 80%;
-                // display: flex;
-                // justify-content: center;
-                // align-items: center;
-                .btn {
-                    // background-color: skyblue;
-                    font-size: 20rpx;
+                align-items: center;
+                justify-content: center;
+                .selector {
+                    width: 98%;
+                    height: 98%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    // background-color: pink;
+                    .select {
+                        // border: 2px solid rebeccapurple;
+                        // width: 20rpx;
+                    }
+                    .icon {
+                        margin-left: 10rpx;
+                        height: 35rpx;
+                        width: 35rpx;
+                        // border: 1px solid palevioletred;
+                        image {
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+                    .innerText {
+                        position: absolute;
+                        font-size: 28rpx;
+                        color:#AAAAAA;
+                        // top: 13rpx;
+                    }
+                    .triangle {
+                        color: #AAAAAA;
+                        position: relative;
+                        right: 15rpx;
+                        font-size: 25rpx;
+                    }
                 }
             }
         }
@@ -105,8 +136,24 @@
             height: 30%;
             width: 98%;
             border-radius: 15rpx;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .line {
+                // border: 2px solid red;
+                width: 100%;
+                height: 90%;
+            }
         }
         .first {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            // .line {
+            //     // border: 2px solid red;
+            //     width: 100%;
+            //     height: 90%;
+            // }
             background-color: #E9FFFF;
         }
         .second {
