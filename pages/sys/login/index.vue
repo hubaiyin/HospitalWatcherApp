@@ -8,13 +8,16 @@
       ></image>
     </view>
     <view class="login">
-      <text class="title">医院危险情况预警系统</text>
+      <text class="title">医患智警</text>
+	  <view class="mainTitle">
+	  	基于YOLOv8的医院危险事件智能警报系统
+	  </view>
       <view class="logContent">
         <text class="title">LOGIN</text>
         <view class="log">
           <view class="iconBox">
             <image
-              src="../../../static/ff5018e3-9d59-49a6-9c95-d7a0a831c6f5.png"
+              src="../../../static/phone.png"
               mode="aspectFit"
               class="icon"
             ></image>
@@ -24,15 +27,15 @@
         <view class="log">
           <view class="iconBox">
             <image
-              src="../../../static/52200cac-87bc-4125-adbd-08b165dd276c.png"
+              src="../../../static/lock-blue.png"
               mode="aspectFit"
               class="icon"
             ></image>
           </view>
           <input class="input" password type="text" placeholder="请输入密码" />
         </view>
-        <view class="log">
-          <button class="btn" @tap="jump">登录</button>
+        <view class="log" >
+          <button class="btn" style="color: #fff;" @tap="jump">登录</button>
         </view>
         <view class="log">
           <view>
@@ -48,23 +51,8 @@
       <view class="more">
         <view class="text">
           <view class="line"> </view>
-          <view class="word"> 更多登录方式 </view>
+          <view class="word"> DEVELOPED BY UNIAPP AND YOLOV8 </view>
           <view class="line"> </view>
-        </view>
-        <view class="other">
-          <image
-            class="logo"
-            src="../../../static/e335b1bc-2def-4b40-83e6-e288301205c8.png"
-            mode="aspectFit"
-          ></image>
-          <image
-            class="logo"
-            src="../../../static/7e26a70a-92d2-4d1a-b0f3-16b312934167.png"
-            mode="aspectFit"
-          ></image>
-        </view>
-        <view class="text">
-          登录即代表您已阅读并同意 <span>用户协议</span> 与 <span>隐私政策</span>
         </view>
       </view>
     </view>
@@ -200,7 +188,7 @@ export default {
   position: relative;
   .login {
     box-sizing: border-box;
-    padding: 36rpx;
+    padding: 82rpx;
     background: #fff;
     position: absolute;
     height: 78vh;
@@ -211,22 +199,39 @@ export default {
     flex-direction: column;
     align-items: center;
     .title {
-      color: #48419d;
-      font-size: 60rpx;
-      font-family: "Novecento wide", "半展开", "粗体";
+      color: #6C84C3;
+      font-size: 72rpx;
+	  font-weight: bold;
+	  letter-spacing: 8rpx;
     }
+	.mainTitle{
+		margin-top: 16rpx;
+		color: #A8BAEA;
+		font-size: 28rpx;
+		border-top: 1.5px solid #A8BAEA;
+		height: 60rpx;
+		padding-top: 20rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 800;
+	}
     .logContent {
       margin-top: 80rpx;
       height: 580rpx;
       width: 665rpx;
-      background-color: #dad8fc;
+      background-color: #D8E3FF;
       border-radius: 30rpx;
       display: flex;
       flex-direction: column;
       justify-content: space-around;
       align-items: center;
-      padding-top: 4%;
       box-sizing: border-box;
+	  .title {
+	    color: #5672B9;
+	    font-size: 82rpx;
+	    font-family: "Novecento wide", "半展开", "粗体";
+	  }
       .log {
         display: flex;
         .iconBox {
@@ -253,13 +258,13 @@ export default {
         .btn {
           width: 580rpx;
           height: 90rpx;
-          background-color: #8c83f4;
-          color: #e9e7fd;
+          background-color: #7B9AEA;
         }
         .deal {
           font-size: 24rpx;
+		  font-weight: bold;
           span {
-            color: #8c83f4;
+            color: #5672B9;
             font-style: italic;
           }
         }
@@ -284,13 +289,17 @@ export default {
         box-sizing: border-box;
         .line {
           height: 0.5px;
-          width: 30%;
+          width: 12%;
           border: 0.5px solid #d7d7d7;
         }
         .word {
           padding: 0 10rpx;
           font-size: 26rpx;
           color: #d7d7d7;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  font-weight: "Novecento wide", "半展开", "粗体";
         }
 		span{
 			color: #000;

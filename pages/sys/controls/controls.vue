@@ -16,7 +16,7 @@
             </span>
           </view>
         </view>
-        <view class="setting">
+        <view class="setting" @tap="jump">
           <image
             src="../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png"
             mode="aspectFit"
@@ -69,9 +69,9 @@
 			  	<span style="color: #6787F9">
 			  		编辑</span>
 			  </view>｜<view class="button" @click="showDelete = true">
-			  	<image src="../../../static/rubbish.png" mode="aspectFit" style="height: 22px; width: 22px;"></image>
-			  	<span style="color: #FF5D5D" >
-			  		删除</span>
+			  	<image :src="!item.running?'../../../static/shutup.png':'../../../static/rubbish.png'" mode="aspectFit" style="height: 22px; width: 22px;"></image>
+			  	<span :style="{color: item.running?'#FF5D5D':'#6787F9'}" >
+			  		{{item.running?'停用':'启用'}}</span>
 			  </view>
           </view>
           <view :class="item.deal === '正在运行' ? 'isDealt' : 'unDealt'">
@@ -87,75 +87,24 @@
         </view>
       </scroll-view>
     </view>
-	<u-modal :show="showEdit" :closeOnClickOverlay="true" :showCancelButton="true" @confirm="showEdit=false" @cancel="showEdit=false" @close="showEdit=false" width="348px">
-		<view class="informBox">
-			<view class="title">
-				{{warnData[0].name}}
-			</view>
-			  <view class="video">
-			  	<video src="" style="height: 100%;width: 100%;object-fit: fill;"></video>
-			  </view>
-			  <view class="scroll">
-				  <view class="edit">
-				  	<span>编辑区</span>
-					<image src="../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png" mode="aspectFit" style="width: 40rpx;height: 40rpx;"></image>
-				  </view>
-			  	<view class="img">
-					<canvas
-					  canvas-id="myCanvas"
-					  style="
-					    background-color: aqua;
-					    margin: 0 auto;
-					    height: 246px;
-					    width: 328px;
-						position: absolute;
-						top: 0;
-						left: 0;
-						z-index: 999;
-					  "
-					  @touchstart="start"
-					  @touchmove="move"
-					  @touchend="stop"
-					  :disable-scroll="true"
-					  ></canvas>
-			  		<image src="../../../static/logBack.jpeg" mode="aspectFit" style="height: 328px;width: 246px;"></image>
-			  	</view>
-				<view class="edit">
-					<span>编辑区</span>
-					<image src="../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png" mode="aspectFit" style="width: 40rpx;height: 40rpx;"></image>
-				</view>
-				<view class="options">
-					<label>
-						<checkbox /><text>进入危险区域</text>
-					</label>
-				</view>
-			  </view>
-		</view>
-	</u-modal>
+	<Edit :showEdit="showEdit" @change="changeShow" :warnData="warnData" ></Edit>
   </view>
 </template>
 
 <script>
+import Edit from './components/edit.vue'
 export default {
+	components:{Edit},
   data() {
     return {
-	startPoint: {
-	    x: null,
-	    y: null,
-	},
-	  border: [],
-	  borData: {},
-	  ctx: null,
-	  painting: false,
+		showEdit:false,
       safeHeight: 0,
       total: 20,
       working: 19,
       longitude: 0,
       latitude: 0,
-      isGet: 0,
       isShow: false,
 	  showDelete:false,
-	  showEdit:false,
       choosen: 2,
       scrollHeight: 0,
 	  warnData: [
@@ -165,7 +114,10 @@ export default {
 	      deal: "正在运行",
 		  number:'A104',
 		  department:'急诊科走廊',
-		  leader:'沛沛'
+		  leader:'沛沛',
+		  running:true,
+		  border: [],
+		  video:''
 	    },
 	    {
 	      id: "114514",
@@ -173,7 +125,10 @@ export default {
 	      deal: "停用",
 		  number:'A102',
 		  department:'急诊部',
-		  leader:'潇迪'
+		  leader:'潇迪',
+		  running:false,
+		  border: [],
+		  video:''
 	    },
 	    {
 	      id: "191919",
@@ -181,7 +136,20 @@ export default {
 	      deal: "正在运行",
 		  number:'A103',
 		  department:'精神科',
-		  leader:'轩轩'
+		  leader:'轩轩',
+		  running:true,
+		  border: [{
+			  id:'',
+			  width:128,
+			  height:244,
+			  top:12,
+			  left:33,
+			  right:161,
+			  bottom:256
+		  }],
+		  video:'',
+		  img:'',
+		  ability:[]
 	    },
 	    {
 	      id: "2203",
@@ -189,86 +157,30 @@ export default {
 	      deal: "停用",
 		  number:'A101',
 		  department:'大厅',
-		  leader:'阿为'
+		  leader:'阿为',
+		  running:false,
+		  border: [],
+		  video:''
 	    },
 	  ],
 	  dealIcon: [
 	    "../../../static/20230910-194834.png",
 	    "../../../static/20230910-194949.png",
 	  ],
+	  
     };
   },
   methods:{
-	  start(e) {
-	        console.log(e.touches[0]);
-	        let x = e.touches[0].y;
-	        let y = e.touches[0].x;
-	        this.startPoint.x = x;
-	        this.startPoint.y = y;
-	        console.log(this.startPoint);
-	        this.painting = true;
-	        this.borData = {
-	          maxX: x,
-	          minX: x,
-	          maxY: y,
-	          minY: y,
-	        };
-	        console.log(this.borData);
-	      },
-	      move(e) {
-	        console.log(e.touches[0]);
-	        let x = e.touches[0].x;
-	        let y = e.touches[0].y;
-	        let newPoint = { x: x, y: y };
-	        const throttlePush = throttle(this.push, 300);
-	        if (this.painting) {
-	          this.drawLine(
-	            this.startPoint.x,
-	            this.startPoint.y,
-	            newPoint.x,
-	            newPoint.y
-	          );
-	          this.startPoint = newPoint;
-	          throttlePush(newPoint);
-	        }
-	      },
-	      stop() {
-	        this.painting = false;
-	        setTimeout(() => {
-	          this.ctx.clearRect(0, 0, 224, 224);
-	          console.log("bye");
-	        });
-	        console.log(this.borData);
-	        this.border.push({
-	          width: this.borData.maxX - this.borData.minX,
-	          height: this.borData.maxY - this.borData.minY,
-	          id: moment().format("MMMM Do YYYY, h:mm:ss a"),
-	          top: this.borData.minY,
-	          left: this.borData.minX,
-	        });
-	        console.log(this.border);
-	      },
-	      push(newPoint) {
-	        this.borData.maxX = Math.max(newPoint.x, this.borData.maxX);
-	        this.borData.minX = Math.min(newPoint.x, this.borData.minX);
-	        this.borData.maxY = Math.max(newPoint.y, this.borData.maxY);
-	        this.borData.minY = Math.min(newPoint.y, this.borData.minY);
-	      },
-	      drawLine(xStart, yStart, xEnd, yEnd) {
-	        console.log(xStart);
-	        this.ctx.beginPath();
-	        this.ctx.lineWidth = 3;
-	        this.ctx.moveTo(xStart, yStart);
-	        this.ctx.lineTo(xEnd, yEnd);
-	        this.ctx.stroke();
-	        this.ctx.closePath();
-	        this.ctx.draw();
-	      },
+	  changeShow(){
+		  console.log('被触发了')
+		  this.showEdit = false;
+	  },
+	  jump(){
+		  uni.navigateTo({
+		  	url:'/pages/sys/personal/setting/setting'
+		  })
+	  }
   },
-  onReady: function () {
-      this.ctx = uni.createCanvasContext("myCanvas");
-      console.log(this.ctx);
-    },
   onLoad() {
     this.safeHeight = uni.getWindowInfo().safeArea.height;
     console.log(this.safeHeight);
@@ -474,7 +386,7 @@ export default {
 	      position: absolute;
 	      top: 18rpx;
 	      right: 20rpx;
-	      color: #f09035;
+	      color: #FF5D5D;
 	      display: flex;
 	      align-items: center;
 	      .img {
@@ -490,58 +402,5 @@ export default {
 	  }
   }
 }
-.informBox{
-	  width: 100%;
-	  display: flex;
-	  flex-direction: column;
-	  align-items: center;
-	  .title{
-	  	font-size: 36rpx;
-	  	font-weight: bold;
-	  }
-	  .video {
-	    display: flex;
-	    justify-content: center;
-	    align-items: center;
-	  	width: 328px;
-	  	height: 246px;
-	  }
-	  .scroll{
-		  margin-top: 10px;
-		  height: 246px;
-		  overflow: auto;
-		  width: 328px;
-		  
-		  .img{
-		  	width:  328px;
-		  	height: 246px;
-		  	background-color: pink;
-			position: relative;
-		  }
-		  .edit{
-			  width: 100%;
-			  height: 48rpx;
-			  display: flex;
-			  align-items: center;
-			  justify-content: space-between;
-			  span{
-				  font-size: 34rpx;
-				  font-weight: bold;
-			  }
-		  }
-		  .options{
-			  .checkBox{
-				  border: 1px solid #dfdfdf;
-				  width: 60%;
-				  display: flex;
-				  align-items: center;
-				  margin: 0;
-				  border-radius: 10rpx;
-				  // padding: 2rpx 4rpx;
-			  }
-		  }
-	  }
-	  
-	  
-  }
+
 </style>
