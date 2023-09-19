@@ -42,20 +42,21 @@
 					<image src="../../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png" mode="aspectFit" style="width: 40rpx;height: 40rpx;"></image>
 				</view>
 				<view class="options">
-					<u-checkbox-group
-					    v-model="checkboxValue1"
-					    placement="column"
-					    @change="checkboxChange"
-					>
-					    <u-checkbox
-					        :customStyle="{marginBottom: '8px'}"
-					        v-for="(item, index) in checkboxList1"
-					        :key="index"
-					        :label="item.name"
-					        :name="item.name"
-					    >
-					    </u-checkbox>
-					</u-checkbox-group>
+					<view class="uni-list">
+						<checkbox-group @change="checkboxChange">
+							<view class="borderBox" v-for="item in items" :key="item.value">
+								<label class="uni-list-cell uni-list-cell-pd checkbox">
+									<view>
+										<checkbox :value="item.value" :checked="item.checked" />
+									</view>
+									<view>{{item.name}}</view>
+								</label>
+								<view class="time">
+									<input type="number" v-model="item.time" style="width: 100%; height: 100%;text-align: center;" @input="limitation(item)">
+								</view>
+							</view>
+						</checkbox-group>
+					</view>
 				</view>
 			  </view>
 		</view>
@@ -87,18 +88,43 @@
 				video:'',
 				borData: {},
 				painting: false,
-				checkboxValue1:[],
-				// 基本案列数据
-				checkboxList1: [{
-						name: '苹果',
+				items: [{
+						value: 'danger',
+						name: '进入危险区',
+						checked:true,
+						time:60
 					},
 					{
-						name: '香蕉',
+						value: 'drop',
+						name: '摔跤',
+						checked: false,
+						time:60
 					},
 					{
-						name: '橙子',
+						value: 'stay',
+						name: '停留时间过长',
+						checked:true,
+						time:60
+					},
+					{
+						value: 'fire',
+						name: '明火',
+						checked:false,
+						time:60
+					},
+					{
+						value: 'smoke',
+						name: '烟雾',
+						checked:false,
+						time:60
+					},
+					{
+						value: 'smoking',
+						name: '吸烟',
+						checked:true,
+						time:60
 					}
-				],
+				]
 			}
 		},
 		methods:{
@@ -150,11 +176,19 @@
 			  this.borData.maxY = Math.max(newPoint.y, this.borData.maxY);
 			  this.borData.minY = Math.min(newPoint.y, this.borData.minY);
 			},
-			checkboxChange(n) {
-			    console.log('change', n);
-			},
 			changeShow(){
 				this.$emit('change');
+			},
+			checkboxChange(e){
+				let values = e.target.value;
+				this.items.forEach(item=>{
+					if(values.includes(item.value)){
+						item.checked = true;
+					}
+				})
+			},
+			limitation(item){
+				item.time = Math.abs(item.time)
 			}
 		}
 	}
@@ -223,6 +257,31 @@
 		  }
 		  .options{
 			  width: 100%;
+			  .borderBox{
+				  display: flex;
+				  margin: 0 auto;
+				  width: 90%;
+				  align-items: center;
+				  justify-content: space-between;
+				  margin-top: 10px;
+				  .checkbox{
+				  	display: flex;
+				  	align-items: center;
+				  	border: 1px solid grey;
+				  	padding: 4px;
+				  	padding-top: 2px;
+				  	width: 54%;
+				  	border-radius: 4px;
+				  	
+				  }
+				  .time{
+					  width: 36%;
+					  height: 36px;
+					  background-color: #e5e5e5;
+					  border-radius: 4px;
+					  
+				  }
+			  }
 		  }
 	  }
 	  
