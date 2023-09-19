@@ -22,7 +22,7 @@
               class="icon"
             ></image>
           </view>
-          <input class="input" type="text" placeholder="请输入手机号" />
+          <input class="input" type="text" placeholder="请输入手机号" placeholder-style="color:#c5c5c5"/>
         </view>
         <view class="log">
           <view class="iconBox">
@@ -32,7 +32,7 @@
               class="icon"
             ></image>
           </view>
-          <input class="input" password type="text" placeholder="请输入密码" />
+          <input class="input" password type="text" placeholder="请输入密码" placeholder-style="color:#c5c5c5"/>
         </view>
         <view class="log" >
           <button class="btn" style="color: #fff;" @tap="jump">登录</button>
@@ -41,7 +41,7 @@
           <view>
             <checkbox style="transform: scale(0.6)" /><text
               class="deal"
-              >登录即代表您已阅读并同意<span @tap="changeShow">用户协议</span>与<span@tap="changeShow"
+              >登录即代表您已阅读并同意<span @tap="changeShow">用户协议</span>与<span @tap="changeShow"
                 >隐私政策</span
               ></text
             >
@@ -217,7 +217,7 @@ export default {
 		font-weight: 800;
 	}
     .logContent {
-      margin-top: 80rpx;
+      margin-top: 50rpx;
       height: 580rpx;
       width: 665rpx;
       background-color: #D8E3FF;
@@ -254,6 +254,9 @@ export default {
           border-radius: 0 15rpx 15rpx 0;
           box-sizing: border-box;
           padding: 16rpx;
+        }
+        input::placeholder {
+            color: #f60202;
         }
         .btn {
           width: 580rpx;
@@ -293,13 +296,14 @@ export default {
           border: 0.5px solid #d7d7d7;
         }
         .word {
+          // border: 2px solid red;
           padding: 0 10rpx;
-          font-size: 26rpx;
+          font-size: 23rpx;
           color: #d7d7d7;
-		  display: flex;
-		  justify-content: center;
-		  align-items: center;
-		  font-weight: "Novecento wide", "半展开", "粗体";
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: "Novecento wide", "半展开", "粗体";
         }
 		span{
 			color: #000;

@@ -62,7 +62,7 @@ export default {
             ]
           };
         this.chartData = JSON.parse(JSON.stringify(res));
-      }, 2000);
+      }, 2500);
     },
   }
 };
