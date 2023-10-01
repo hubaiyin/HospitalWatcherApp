@@ -34,7 +34,7 @@
         </view>
         <view class="second">
             <div class="line">
-                <line-chart></line-chart>
+                <bar-chart></bar-chart>
             </div>
         </view>
         <view class="third">
@@ -47,9 +47,10 @@
 
 <script>
 import lineChart from '../../../components/lineChart.vue';
-	// import ringChart from '../../../components/ringChart.vue';
+import barChart from '../../../components/barChart.vue';
+
 	export default {
-        components:{ lineChart },
+        components:{ lineChart , barChart},
 		data() {  
 			return {
                 showFilter: false,
@@ -140,7 +141,7 @@ import lineChart from '../../../components/lineChart.vue';
             justify-content: center;
             align-items: center;
             .line {
-                // border: 2px solid red;
+                border: 2px solid red;
                 width: 100%;
                 height: 90%;
             }

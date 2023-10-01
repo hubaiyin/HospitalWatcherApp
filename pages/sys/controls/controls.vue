@@ -54,7 +54,7 @@
         class="content"
         :style="{ height: scrollHeight + 'px' }"
       >
-        <view class="details" v-for="(item, index) in warnData" :key="item.id">
+        <view class="details" v-for="(item) in warnData" :key="item.id">
           <view class="deviceName">
             {{ item.name }}
           </view>
@@ -94,7 +94,7 @@
 <script>
 import Edit from './components/edit.vue'
 export default {
-	components:{Edit},
+	components:{ Edit },
   data() {
     return {
 		showEdit:false,
