@@ -10,7 +10,7 @@ class Request {
 	}
 	get(url, data = {}) {
 		this.method = 'GET',
-			tis.url = this.baseUrl + url
+			this.url = this.baseUrl + url
 		this.data = data
 		return this._()
 	}
@@ -20,9 +20,15 @@ class Request {
 		this.data = data;
 		return this._();
 	}
-	delete() {
+	delete(url, data = {}) {
 		this.method = "DELETE"
 		this.url = this.baseUrl + url
+		this.data = data;
+		return this._();
+	}
+	put(url, data = {}) {
+		this.method = 'PUT',
+			this.url = this.baseUrl + url
 		this.data = data;
 		return this._();
 	}
