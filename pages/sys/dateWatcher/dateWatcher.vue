@@ -3,13 +3,13 @@
 		<view class="inner">
 			<view class="header">
 				<view class="topNav">
-					<view class="left" :class="choosen === 1?'choosen':''" @click="choosen = 1">
+					<view class="left" :class="choosen === 1 ? 'choosen' :'' " @click="chooseOne()">
 						<span>
-							<h2 v-show="choosen === 1">实时监测</h2>
-							<h3 v-show="choosen === 2">实时监测</h3>
+							<h2 v-show="choosen === 1">数据总览</h2>
+							<h3 v-show="choosen === 2">数据总览</h3>
 						</span>
 					</view>
-					<view class="right" :class="choosen === 2?'choosen':''" @click="choosen = 2">
+					<view class="right" :class="choosen === 2?'choosen':''" @click="chooseTwo()">
 						<span>
 							<h2 v-show="choosen === 2">历史数据</h2>
 							<h3 v-show="choosen === 1">历史数据</h3>
@@ -46,6 +46,14 @@
 			this.safeHeight = uni.getWindowInfo().safeArea.height;
 			console.log(this.safeHeight);		
 		},
+		methods: {
+			chooseOne() {
+				this.choosen = 1;
+			},
+			chooseTwo() {
+				this.choosen = 2;
+			}
+		}
 	}
 </script>
 

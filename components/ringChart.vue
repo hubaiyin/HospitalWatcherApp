@@ -32,12 +32,12 @@
             lineHeight: 25
           },
           title: {
-            name: "收益率",
+            name: "",
             fontSize: 15,
             color: "#666666"
           },
           subtitle: {
-            name: "70%",
+            name: "",
             fontSize: 25,
             color: "#7cb5ec"
           },
