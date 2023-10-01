@@ -12,6 +12,12 @@
   
   <script>
   export default {
+  props: {
+    range: {
+      required: true ,
+      type: Number
+    }
+  },
     data() {
       return {
         chartData: {},
@@ -54,22 +60,64 @@
       this.getServerData();
     },
     methods: {
-      getServerData() {
+      getServerData(val) {
         //模拟从服务器获取数据时的延时
         setTimeout(() => {
           //模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
           let res = {
-              categories: ["2018","2019","2020","2021","2022","2023"],
+              categories: ["进入禁区","摔倒","烟雾","明火","吸烟","长时停留"],
               series: [
                 {
                   name: "目标值",
-                  data: [35,36,31,33,13,34]
+                  data: [10,4,3,0,15,23]
                 },
               ]
             };
+            if(val == 1) {
+              res = {
+                categories: ["进入禁区","摔倒","烟雾","明火","吸烟","长时停留"],
+                series: [
+                  {
+                    name: "目标值",
+                    data: [10,4,3,0,15,23]
+                  },
+                ]
+              }
+            }
+            if(val == 3) {
+              res = {
+                categories: ["进入禁区","摔倒","烟雾","明火","吸烟","长时停留"],
+                series: [
+                  {
+                    name: "目标值",
+                    data: [32,13,5,2,23,34]
+                  },
+                ]
+              }
+            }
+            if(val == 7) {
+              res = {
+                categories: ["进入禁区","摔倒","烟雾","明火","吸烟","长时停留"],
+                series: [
+                  {
+                    name: "目标值",
+                    data: [54,45,23,4,41,62]
+                  },
+                ]
+              }
+            }
           this.chartData = JSON.parse(JSON.stringify(res));
         }, 5000);
       },
+    },
+    watch: {
+      range: {
+        handler: function(newVal , oldVal) {
+          this.chartData = {};
+          this.getServerData(newVal);
+        },
+        immediate: true,
+      }
     }
   };
   </script>

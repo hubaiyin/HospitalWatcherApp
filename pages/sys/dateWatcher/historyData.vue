@@ -29,17 +29,17 @@
         </view>
         <view class="first">
             <div class="line">
-                <line-chart></line-chart>
+                <line-chart :range="num"></line-chart>
             </div>
         </view>
         <view class="second">
             <div class="line">
-                <bar-chart></bar-chart>
+                <bar-chart :range="num"></bar-chart>
             </div>
         </view>
         <view class="third">
             <div class="line">
-                <line-chart></line-chart>
+                <row-chart :range="num"></row-chart>
             </div>
         </view>
     </view>
@@ -48,11 +48,13 @@
 <script>
 import lineChart from '../../../components/lineChart.vue';
 import barChart from '../../../components/barChart.vue';
+import rowChart from '../../../components/rowChart.vue';
 
 	export default {
-        components:{ lineChart , barChart},
+        components:{ lineChart , barChart , rowChart },
 		data() {  
 			return {
+                num : 1,
                 showFilter: false,
                 filters: [["近一天", "近三天", "近一周"]],
                 range:'近一天',
@@ -62,11 +64,17 @@ import barChart from '../../../components/barChart.vue';
             setFilter(e) {
                 this.showFilter = false;
                 this.range = e.value[0];
+                if(this.range == "近一天") {
+                    this.num = 1;
+                }
+                if(this.range == "近三天") {
+                    this.num = 3;
+                }
+                if(this.range == "近一周") {
+                    this.num = 7;
+                }
             },
         },
-        onLoad(){
-
-        }
 	}
 </script>
 
@@ -141,7 +149,7 @@ import barChart from '../../../components/barChart.vue';
             justify-content: center;
             align-items: center;
             .line {
-                border: 2px solid red;
+                // border: 2px solid red;
                 width: 100%;
                 height: 90%;
             }

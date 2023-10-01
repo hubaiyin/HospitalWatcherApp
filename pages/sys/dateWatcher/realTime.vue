@@ -2,9 +2,9 @@
     <view class="body">
         <view class="total">
             <view class="left">
-                <span>今日报警数：47</span>
-                <span>总报警数：12</span>
-                <span>较昨日变化：-15</span>
+                <span>今日报警数：71</span>
+                <span>总报警数：1982</span>
+                <span>较昨日变化：+35</span>
             </view>
             <view class="right">
                 <image src="../../../static/analysis.png" mode="aspectFit" alt=""></image>
@@ -23,8 +23,8 @@
                     <view class="titleText">危险区域</view>
                 </view>
                 <view class="text">
-                    <span>总事件数：3</span>
-                    <span>今日新增：1</span>
+                    <span>总事件数：271</span>
+                    <span>今日新增：23</span>
                 </view>
             </view>
             <!--  -->
@@ -36,8 +36,8 @@
                     <div class="titleText">烟雾</div>
                 </view>
                 <view class="text">
-                    <span>总事件数：3</span>
-                    <span>今日新增：1</span>
+                    <span>总事件数：72</span>
+                    <span>今日新增：2</span>
                 </view>
             </view>
             <!--  -->
@@ -49,8 +49,8 @@
                     <div class="titleText">长时停留</div>
                 </view>
                 <view class="text">
-                    <span>总事件数：3</span>
-                    <span>今日新增：1</span>
+                    <span>总事件数：423</span>
+                    <span>今日新增：18</span>
                 </view>
             </view>
             <!--  -->
@@ -62,8 +62,8 @@
                     <div class="titleText">摔倒</div>
                 </view>
                 <view class="text">
-                    <span>总事件数：3</span>
-                    <span>今日新增：1</span>
+                    <span>总事件数：138</span>
+                    <span>今日新增：12</span>
                 </view>
             </view>
             <!--  -->
@@ -75,8 +75,8 @@
                     <div class="titleText">明火</div>
                 </view>
                 <view class="text">
-                    <span>总事件数：3</span>
-                    <span>今日新增：1</span>
+                    <span>总事件数：62</span>
+                    <span>今日新增：2</span>
                 </view>
             </view>
             <!--  -->
@@ -88,8 +88,8 @@
                     <div class="titleText">吸烟</div>
                 </view>
                 <view class="text">
-                    <span>总事件数：3</span>
-                    <span>今日新增：1</span>
+                    <span>总事件数：376</span>
+                    <span>今日新增：14</span>
                 </view>
             </view>
             <!--  -->
@@ -105,11 +105,12 @@
 			return {
 				safeHeight:0,
 				chartData:[
-					{"name":"一班","value":50},
-					{"name":"二班","value":30},
-					{"name":"三班","value":20},
-					{"name":"四班","value":18,},
-					{"name":"五班","value":8}
+					{"name":"长时停留","value":50},
+					{"name":"危险区域","value":30},
+					{"name":"摔倒","value":20},
+					{"name":"吸烟","value":18,},
+					{"name":"明火","value":8},
+					{"name":"烟雾","value":12}
 				]
 			};
 		},
@@ -165,7 +166,7 @@
         // border: 2px solid red;
         background-color: #E1EDF6;
         width: 99%;
-        height: 27%;
+        height: 28%;
         // height: 400rpx;
         border-radius: 15rpx;
     }
