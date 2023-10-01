@@ -1,48 +1,42 @@
 <template>
-	<view class="main" :style="{height:safeHeight + 'px'}">	
-		<!-- <view class="inner"> -->
-			<view class="header">
-				<view class="topNav">
-					<view class="choosen">
-						<span>
-							<h2>智慧助手</h2>
-						</span>
-					</view>
-				</view>
-				<view class="setting">
-					<image
-						src="../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png"
-						mode="aspectFit"
-						alt=""
-					></image>
+	<view class="main" :style="{ height: safeHeight + 'px' }">
+		<view class="header">
+			<view class="topNav">
+				<view class="choosen">
+					<span>
+						<h2>智慧助手</h2>
+					</span>
 				</view>
 			</view>
-			<view class="body">
-				<view class="title">
-					<span>AI助手</span>
-				</view>
+			<view class="setting">
+				<image src="../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png" mode="aspectFit" alt=""></image>
+			</view>
+		</view>
+		<view class="body">
+			<view class="title">
+				<span>AI助手</span>
+			</view>
+			<scroll-view :scroll-top="scrollTop" class="scroll" scroll-y @scroll="recordHeight" :style="{ height: scrollHeight + 'px' , }">
 				<view class="chat">
-
-					<view v-for="(item, index) in textList" :key="index" :class="isLeft === 1 ? 'left':'right'">
+					<view id="msgbar" v-for="(item, index) in textList" :key="index" :class="isLeft === 1 ? 'left' : 'right'">
 						<view class="avatar">
 							<image src="../../../static/avatar.jpg"></image>
 						</view>
 						<view class="msg">
 							<view>{{ item }}</view>
-						</view> 
+						</view>
 					</view>
-
 				</view>
-				<view class="down">
-					<view class="input">
-						<input type="text" v-model="text">
-						<button @click="send()">
-							<span>发 送</span>
-						</button>
-					</view>
+			</scroll-view>
+			<view class="down" id="down">
+				<view class="input">
+					<input type="text" v-model="text">
+					<button @click="send()">
+						<span>发 送</span>
+					</button>
 				</view>
 			</view>
-		<!-- </view> -->
+		</view>
 	</view>
 </template>
 
@@ -54,18 +48,69 @@
 				isLeft:0,
 				text:"",
 				textList:[],
+				scrollTop:0,
+				newTop:0,
+				scrollHeight:0,
+				count:0,
 			}
 		},
-		onLoad(){
+		onLoad() {
 			this.safeHeight = uni.getWindowInfo().safeArea.height;
-			console.log(this.safeHeight);		
+			console.log("安全高度：" + this.safeHeight);
+			this.$nextTick(()=>{
+				const query = uni.createSelectorQuery().in(this);
+				query.select('#down').boundingClientRect(data => {
+					console.log(data);
+					this.scrollHeight = (data.height / 0.1) * 0.8;	
+				}).exec();	
+			})
 		},		
 		methods:{
 			send(){
-				console.log("输入的消息为：" + this.text);
-				this.textList.push(this.text);
-				this.text="";
-			}
+				if(this.text == ""){
+					uni.showToast({
+						title: '请勿发送空消息',
+						icon: 'none',
+						duration: 1500
+					})  
+				}
+				else {
+					console.log("输入的消息为：" + this.text);
+					this.textList.push(this.text);
+					this.text="";
+					this.toBottom();
+					this.count ++;
+				}	
+			},
+			recordHeight(e) {
+				this.newTop = e.detail.scrollTop;
+			},
+			toBottom() {
+				this.$nextTick(() => {
+					this.query = uni.createSelectorQuery().in(this);
+					this.query
+					.selectAll("#msgbar")
+					.boundingClientRect((data) => {
+						console.log(data);
+						const elements = Array.from(data);
+						console.log("elements");
+						console.log(elements);
+						if (!elements.length) return;
+						let index = elements.length - 1;
+						this.scrollTop = elements[index].bottom - elements[0].bottom;
+					})
+					.exec();
+					this.query = null;
+				});
+			},
+		},
+		watch:{
+			count: {
+				handler() {
+					console.log("@count_handler");
+					this.scrollTop = this.newTop;
+				},
+			},
 		}
 	}
 </script>
@@ -156,6 +201,7 @@
 					display: flex;
 					justify-content:center;
 					align-items: center;
+					margin-bottom: 20rpx;
 					span {
 						color: #747EA1;
 						font-size: 40rpx;
@@ -163,79 +209,89 @@
 						font-family: "Novecento wide", "半展开", "粗体";
 					}
 				}
-				.chat {
-					width: 98%;
-					height: 79%;
-					background-color: #E9EEFF;
-					// border: 2px solid red;
-					display: flex;
-					flex-direction: column;
-					align-items: center;
-					justify-content: flex-start;
-					///////LEFT//////
-					.left {
-						width: 95%;
-						// height: 10%;
-						margin-bottom: 15rpx;
-						// border: 2px solid green;
+				.scroll {
+					// background-color:red;
+					flex-grow: 1;
+					box-sizing: border-box;
+					overflow: hidden;
+					overflow-anchor: false;
+					.chat {
+						// width: 98%;
+						// height: 79%;	
+						background-color: #E9EEFF;
+						// border: 2px solid red;
 						display: flex;
-						align-items: flex-start;
-						.avatar {
-							width: 100rpx;
-							height: 100rpx;
-							image {
-								width: 100%;
-								height: 100%;
-								border-radius: 50%;
+						flex-direction: column;
+						align-items: center;
+						justify-content: flex-start;
+						///////LEFT//////
+						.left {
+							margin-top: 15rpx;
+							max-width: 70%;
+							// height: 10%;
+							margin-bottom: 15rpx;
+							border: 2px solid green;
+							display: flex;
+							align-items: flex-start;
+							.avatar {
+								width: 100rpx;
+								height: 100rpx;
+								image {
+									width: 100%;
+									height: 100%;
+									border-radius: 50%;
+								}
+							}
+							.msg {
+								width: 70%;
+								// height: 80%;
+								background-color: white;
+								margin-left: 20rpx;
+								box-sizing: border-box;
+								padding: 5px 10px;
+								border-radius: 20rpx;
+								view {
+									// width: 96%;
+									word-break:break-all;
+									word-wrap:break-word;
+									// border: 2px solid red;
+								}
 							}
 						}
-						.msg {
-							width: 70%;
-							// height: 80%;
-							background-color: white;
-							margin-left: 20rpx;
-							box-sizing: border-box;
-							padding: 5px 10px;
-							border-radius: 20rpx;
-							view {
-								// width: 96%;
-								word-break:break-all;
-								word-wrap:break-word;
-								// border: 2px solid red;
+						//////RIGHT/////
+						.right {
+							width: 95%;
+							// height: 10%;
+							// border: 2px solid green;
+							margin-bottom: 15rpx;
+							display: flex;
+							flex-direction: row-reverse;
+							align-items: flex-start;
+							.avatar {
+								width: 100rpx;
+								height: 100rpx;
+								image {
+									width: 100%;
+									height: 100%;
+									border-radius: 50%;
+								}
 							}
-						}
-					}
-					//////RIGHT/////
-					.right {
-						width: 95%;
-						// height: 10%;
-						// border: 2px solid green;
-						margin-bottom: 15rpx;
-						display: flex;
-						flex-direction: row-reverse;
-						align-items: flex-start;
-						.avatar {
-							width: 100rpx;
-							height: 100rpx;
-							image {
-								width: 100%;
-								height: 100%;
-								border-radius: 50%;
-							}
-						}
-						.msg {
-							width: 70%;
-							// height: 80%;
-							background-color: white;
-							margin-right: 20rpx;
-							box-sizing: border-box;
-							padding: 5px 10px;
-							border-radius: 20rpx;
-							view {
-								// width: 96%;
-								word-break:break-all;
-								word-wrap:break-word;
-								// border: 2px solid red;
+							.msg {
+								// width: 70%;
+								margin-top: 15rpx;
+								max-width: 70%;
+								// height: 80%;
+								background-color: white;
+								margin-right: 20rpx;
+								box-sizing: border-box;
+								padding: 5px 10px;
+								border-radius: 20rpx;
+								view {
+									// width: 96%;
+									word-break:break-all;
+									word-wrap:break-word;
+									// border: 2px solid red;
+								}
 							}
 						}
 					}
