@@ -208,20 +208,21 @@ export default {
           video: "",
           img: "", //视频中任意一张即可，用来对应场景的
           ability: [
+            // value根据你那边caseType决定
             {
-              value: 100,
+              value: 1,
               name: "进入危险区",
               checked: true,
               time: 60,
             },
             {
-              value: 101,
+              value: 2,
               name: "烟雾",
               checked: false,
               time: 60,
             },
             {
-              value: 102,
+              value: 3,
               name: "区域停留",
               checked: true,
               time: 60,
