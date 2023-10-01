@@ -9,9 +9,7 @@
     </view>
     <view class="login">
       <text class="title">医患智警</text>
-	  <view class="mainTitle">
-	  	基于YOLOv8的医院危险事件智能警报系统
-	  </view>
+      <view class="mainTitle"> 基于YOLOv8的医院危险事件智能警报系统 </view>
       <view class="logContent">
         <text class="title">LOGIN</text>
         <view class="log">
@@ -22,7 +20,13 @@
               class="icon"
             ></image>
           </view>
-          <input class="input" type="text" placeholder="请输入手机号" placeholder-style="color:#c5c5c5"/>
+          <input
+            class="input"
+            type="text"
+            v-model="username"
+            placeholder="请输入手机号"
+            placeholder-style="color:#c5c5c5"
+          />
         </view>
         <view class="log">
           <view class="iconBox">
@@ -32,19 +36,27 @@
               class="icon"
             ></image>
           </view>
-          <input class="input" password type="text" placeholder="请输入密码" placeholder-style="color:#c5c5c5"/>
+          <input
+            class="input"
+            v-model="password"
+            password
+            type="text"
+            placeholder="请输入密码"
+            placeholder-style="color:#c5c5c5"
+          />
         </view>
-        <view class="log" >
-          <button class="btn" style="color: #fff;" @tap="jump">登录</button>
+        <view class="log">
+          <button class="btn" style="color: #fff" @tap="jump">登录</button>
         </view>
         <view class="log">
           <view>
-            <checkbox style="transform: scale(0.6)" /><text
-              class="deal"
-              >登录即代表您已阅读并同意<span @tap="changeShow">用户协议</span>与<span @tap="changeShow"
-                >隐私政策</span
-              ></text
-            >
+            <checkbox-group @change="checked = !checked">
+              <checkbox style="transform: scale(0.6)" :value="true" /><text
+                class="deal"
+                >登录即代表您已阅读并同意<span @tap="changeShow">用户协议</span
+                >与<span @tap="changeShow">隐私政策</span></text
+              >
+            </checkbox-group>
           </view>
         </view>
       </view>
@@ -164,6 +176,9 @@ export default {
     return {
       isShow: false,
       which: 0,
+      password: "",
+      username: "",
+      checked: false,
     };
   },
   methods: {
@@ -171,12 +186,48 @@ export default {
       console.log(this.isShow);
       this.isShow = true;
     },
-	jump(){
-		console.log('jump')
-		uni.switchTab({
-			url:"/pages/sys/home/home"
-		})
-	}
+    jump() {
+      if (!this.checked) {
+        // console.log(this.checked)
+        uni.showToast({
+          title: "请勾选下方用户协议",
+          duration: 1500,
+          icon: "none",
+        });
+        return;
+      }
+
+      const data = {
+        username: this.username,
+        password: this.password,
+      };
+      uni.$http.post("/api/v1/user/login", data).then(({ data }) => {
+        console.log(data);
+        if (data.code === "A1000") {
+          uni.$showMsg(data.message);
+          return;
+        }
+        if (data.code === "00000") {
+          uni.showToast({
+            title: "登录成功",
+            duration: 1500,
+            icon: "none",
+            success: () => {
+              console.log("hi");
+              uni.setStorage({
+                key: "token",
+                data: data.data.token,
+                success: () => {
+                  uni.switchTab({
+                    url: "/pages/sys/home/home",
+                  });
+                },
+              });
+            },
+          });
+        }
+      });
+    },
   },
 };
 </script>
@@ -199,39 +250,39 @@ export default {
     flex-direction: column;
     align-items: center;
     .title {
-      color: #6C84C3;
+      color: #6c84c3;
       font-size: 72rpx;
-	  font-weight: bold;
-	  letter-spacing: 8rpx;
+      font-weight: bold;
+      letter-spacing: 8rpx;
     }
-	.mainTitle{
-		margin-top: 16rpx;
-		color: #A8BAEA;
-		font-size: 28rpx;
-		border-top: 1.5px solid #A8BAEA;
-		height: 60rpx;
-		padding-top: 20rpx;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-weight: 800;
-	}
+    .mainTitle {
+      margin-top: 16rpx;
+      color: #a8baea;
+      font-size: 28rpx;
+      border-top: 1.5px solid #a8baea;
+      height: 60rpx;
+      padding-top: 20rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
     .logContent {
       margin-top: 50rpx;
       height: 580rpx;
       width: 665rpx;
-      background-color: #D8E3FF;
+      background-color: #d8e3ff;
       border-radius: 30rpx;
       display: flex;
       flex-direction: column;
       justify-content: space-around;
       align-items: center;
       box-sizing: border-box;
-	  .title {
-	    color: #5672B9;
-	    font-size: 82rpx;
-	    font-family: "Novecento wide", "半展开", "粗体";
-	  }
+      .title {
+        color: #5672b9;
+        font-size: 82rpx;
+        font-family: "Novecento wide", "半展开", "粗体";
+      }
       .log {
         display: flex;
         .iconBox {
@@ -256,18 +307,18 @@ export default {
           padding: 16rpx;
         }
         input::placeholder {
-            color: #f60202;
+          color: #f60202;
         }
         .btn {
           width: 580rpx;
           height: 90rpx;
-          background-color: #7B9AEA;
+          background-color: #7b9aea;
         }
         .deal {
           font-size: 24rpx;
-		  font-weight: bold;
+          font-weight: bold;
           span {
-            color: #5672B9;
+            color: #5672b9;
             font-style: italic;
           }
         }
@@ -286,7 +337,7 @@ export default {
         align-items: center;
         font-size: 25rpx;
         font-weight: 800;
-		color: #d7d7d7;
+        color: #d7d7d7;
         // flex-direction: row;
         padding: 22rpx;
         box-sizing: border-box;
@@ -305,9 +356,9 @@ export default {
           align-items: center;
           font-weight: "Novecento wide", "半展开", "粗体";
         }
-		span{
-			color: #000;
-		}
+        span {
+          color: #000;
+        }
       }
       .other {
         width: 80%;

@@ -31,8 +31,9 @@
         :latitude="latitude"
         :show-location="isShow"
         id="map1"
+		:markers="markers"
       >
-        <cover-view class="status">
+        <cover-view class="status" @tap="test">
           <cover-view
             style="
               height: 44rpx;
@@ -107,6 +108,29 @@ export default {
 	  showDelete:false,
       choosen: 2,
       scrollHeight: 0,
+	  markers:[
+		  {
+			  id:1221,
+			  latitude:45,
+			  longitude:125,
+			  iconPath:'../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png',
+			  width:32,
+			  height:32,
+			  title:'智慧摄像头-1',
+			  callout:{
+				content: '欢迎来到这里',//文本
+				color:"#fff",//文本颜色
+				fontSize:12,//文字大小
+				borderRadius:3,//callout边框圆角
+				borderWidth:30,//边框宽度
+				borderColor:'',//边框颜色
+				bgColor:"#31c27c",//背景色
+				padding:3,//文本边缘留白
+				display:"ALWAYS",//'BYCLICK':点击显示; 'ALWAYS':常显
+				textAlign:"center",//文本对齐方式。有效值: left, right, center
+			  }
+		  }
+	  ],
 	  warnData: [
 	    {
 	      id: "10086",
@@ -179,6 +203,11 @@ export default {
 		  uni.navigateTo({
 		  	url:'/pages/sys/personal/setting/setting'
 		  })
+	  },
+	  test(){
+		  console.log('hi')
+		  this.longitude = 116
+		  this.latitude = 39
 	  }
   },
   onLoad() {

@@ -2,7 +2,28 @@
   <view style="height: 100vh; width: 100vw; position: relative">
     <view :style="{ height: safeAreaTop + 'px' }" class="warnBox" id="warnBox">
       <view class="title">
-        <h2>报警事件列表</h2>
+        <view class="topNav">
+          <view
+            class="left"
+            :class="choosen === 0 ? 'choosen' : ''"
+            @click="choosen = 0"
+          >
+            <span>
+              <h2 v-show="choosen === 0">实时警报</h2>
+              <h3 v-show="choosen === 1">实时警报</h3>
+            </span>
+          </view>
+          <view
+            class="right"
+            :class="choosen === 1 ? 'choosen' : ''"
+            @click="choosen = 1"
+          >
+            <span>
+              <h2 v-show="choosen === 1">历史事件</h2>
+              <h3 v-show="choosen === 0">历史事件</h3>
+            </span>
+          </view>
+        </view>
         <view class="icon" @tap="jump">
           <image
             src="../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png"
@@ -29,26 +50,11 @@
               @cancel="showFilter = false"
             ></u-picker>
             <view class="timeText">
-              {{ formatTime }}
-            </view>
-          </view>
-          <view class="selector" @tap="showFilter = true">
-            <view class="icon">
-              <image
-                src="../../../static/7d163ad9-885d-47cb-a29e-043e5a9933ac.png"
-                mode="aspectFit"
-                class="img"
-              ></image>
-            </view>
-            <u-picker
-              :show="showFilter"
-              :columns="filters"
-              class="select"
-              @confirm="setFilter"
-              @cancel="showFilter = false"
-            ></u-picker>
-            <view class="timeText">
-              {{ formatTime }}
+              {{
+                filterIndex !== null
+                  ? filters[0][filterIndex]
+                  : "请选择事件名称"
+              }}
             </view>
           </view>
           <view class="selector" @tap="showStatus = true">
@@ -67,34 +73,13 @@
               @cancel="showStatus = false"
             ></u-picker>
             <view class="timeText">
-              {{ formatTime }}
-            </view>
-          </view>
-          <view class="selector" @tap="show = true">
-            <view class="icon">
-              <image
-                src="../../../static/563aa794-f528-4ab0-8b23-4e3aff0adf48.png"
-                mode="aspectFit"
-                class="img"
-              ></image>
-            </view>
-            <u-datetime-picker
-              class="date"
-              :show="show"
-              v-model="time"
-              mode="datetime"
-              @confirm="setTime"
-              @cancel="show = false"
-              :closeOnClickOverlay="true"
-              @close="show = false"
-            >
-            </u-datetime-picker>
-            <view class="timeText">
-              {{ formatTime }}
+              {{
+                statusIndex !== null ? status[0][statusIndex] : "请选择警报级别"
+              }}
             </view>
           </view>
         </view>
-        <view class="icons">
+        <view class="icons" @click="reset">
           <image
             src="../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png"
             mode="aspectFit"
@@ -109,7 +94,7 @@
       >
         <view
           class="box"
-          v-for="(item, index) in warnData"
+          v-for="(item, index) in choosen === 0 ? warnData : historyData"
           :key="item.id"
           @touchstart="startMove($event, item)"
           @touchmove="moving($event, item)"
@@ -136,7 +121,11 @@
                 {{ item.department }}
               </view>
             </view>
-            <view class="buttons" v-show="item.deal === '未处理'">
+            <view
+              class="buttons"
+              v-show="item.deal === '未处理'"
+              @click="alert"
+            >
               <image src="../../../static/alert.png" mode="aspectFit"></image>
             </view>
             <view :class="item.deal === '已处理' ? 'isDealt' : 'unDealt'">
@@ -180,254 +169,80 @@
         @confirm="showVideo = false"
         width="348px"
       >
-        <view class="informBox">
-          <view class="video">
-            <video
-              v-show="showVideo"
-              src=""
-              style="width: 328px; height: 246px; transition: 1s"
-            ></video>
-          </view>
-          <view style="height: 200px; overflow: auto; width: 328px">
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 事件id </view>
-                <view class="column right">
-                  {{ warnData[0].id }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 摄像头 </view>
-                <view class="column right">
-                  {{ warnData[0].name }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 区域 </view>
-                <view class="column right">
-                  {{ warnData[0].department }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 类别 </view>
-                <view class="column right">
-                  {{ warnData[0].eventName }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 等级 </view>
-                <view class="column right"> {{ warnData[0].level }}级 </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 时间 </view>
-                <view class="column right" style="font-size: 32rpx">
-                  {{ warnData[0].time }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 状态 </view>
-                <view
-                  class="column right"
-                  :class="warnData[0].deal === '已处理' ? 'dealt' : 'unDealt'"
-                >
-                  {{ warnData[0].deal }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 处理内容 </view>
-                <view class="column right">
-                  {{ warnData[0].content }}
-                </view>
-              </view>
-            </view>
-          </view>
-        </view>
+        <check
+          v-if="showVideo"
+          :warnData="choosen === 0 ? warnData[index] : historyData[index]"
+        ></check>
       </u-modal>
       <u-modal
         style="position: absolute"
         :show="showDeal"
         :closeOnClickOverlay="true"
         @close="showDeal = false"
-        @confirm="showDeal = false"
+        @confirm="sendDeal"
         showCancelButton
         @cancel="showDeal = false"
         width="348px"
       >
-        <view class="informBox">
-          <view class="video">
-            <video
-              v-show="showDeal"
-              src=""
-              style="width: 328px; height: 246px; transition: 1s"
-            ></video>
-          </view>
-          <view style="height: 200px; overflow: auto; width: 328px">
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 事件id </view>
-                <view class="column right">
-                  {{ warnData[0].id }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 摄像头 </view>
-                <view class="column right">
-                  {{ warnData[0].name }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 区域 </view>
-                <view class="column right">
-                  {{ warnData[0].department }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 类别 </view>
-                <view class="column right">
-                  {{ warnData[0].eventName }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 等级 </view>
-                <view class="column right"> {{ warnData[0].level }}级 </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 时间 </view>
-                <view class="column right" style="font-size: 32rpx">
-                  {{ warnData[0].time }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 状态 </view>
-                <view class="column right dealt">
-                  {{ warnData[0].deal }}
-                </view>
-              </view>
-            </view>
-            <view class="contents">
-              <view class="line">
-                <view class="column left"> 处理内容 </view>
-                <view class="column right">
-                  {{ warnData[0].content }}
-                </view>
-              </view>
-            </view>
-            <view class="contents" style="margin-top: 24rpx">
-              <span style="font-size: 28rpx">处理结果</span>
-              <view class="textarea">
-                <u--textarea :adjustPosition="false" height="120"></u--textarea>
-              </view>
-            </view>
-          </view>
-        </view>
+        <edit
+          v-if="showDeal"
+          @getContent="setContent"
+          :warnData="choosen === 0 ? warnData[index] : historyData[index]"
+        ></edit>
       </u-modal>
     </view>
   </view>
 </template>
 
 <script>
+import check from "./components/check.vue";
+import edit from "./components/edit.vue";
 export default {
+  components: {
+    check,
+    edit,
+  },
   data() {
     return {
       moveX: 0,
       startX: 0,
       safeAreaTop: 0,
       show: false,
-      time: Number(new Date()),
-      formatTime: "",
       showFilter: false,
       showStatus: false,
-      status: [["中国", "美国", "日本"]],
-      filters: [["中国", "美国", "日本"]],
+      status: [["1级", "2级", "3级"]],
+      statusValue: [1, 2, 3],
+      statusIndex: null,
+      filters: [["进入危险区域", "烟雾", "区域停留", "摔倒", "明火", "吸烟"]],
+      filterValue: [100, 101, 102, 103, 104, 105],
+      filterIndex: null,
       scrollHeight: 0,
-      warnData: [
-        {
-          id: "10086",
-          name: "智能摄像头-1",
-          eventName: "进入危险区域",
-          level: 3,
-          time: "09-25 22:10",
-          department: "急诊部",
-          deal: "已处理",
-          content: "加强培训",
-        },
-        {
-          id: "114514",
-          name: "智能摄像头-3",
-          eventName: "摔倒",
-          level: 1,
-          time: "09-24 22:14",
-          department: "精神科",
-          deal: "未处理",
-          content: "迅速前去查看情况",
-        },
-        {
-          id: "191919",
-          name: "智能摄像头-1",
-          eventName: "进入危险区域",
-          level: 3,
-          time: "09-24 22:10",
-          department: "急诊部",
-          deal: "已处理",
-          content: "加强培训",
-        },
-        {
-          id: "2203",
-          name: "智能摄像头-2",
-          eventName: "吸烟",
-          level: 2,
-          time: "09-26 22:14",
-          department: "急诊部",
-          deal: "已处理",
-          content: "进行劝导",
-        },
-      ],
+      choosen: 0,
+      pageSize: 10,
+      pageNum: 1,
+      warnIsAll: false,
+      hisIsAll: false,
+      caseType: null,
+      warningLevel: null,
+      warnData: [],
+      historyData: [],
       dealIcon: [
         "../../../static/20230910-194834.png",
         "../../../static/attention.png",
       ],
       showVideo: false,
       showDeal: false,
+      content: "",
+      id: null,
+      index: 0,
     };
   },
   onLoad() {
-    console.log(uni.getWindowInfo().safeArea);
+    // console.log(uni.getWindowInfo().safeArea);
     this.safeAreaTop = uni.getWindowInfo().safeArea.height;
-    const timeFormat = uni.$u.timeFormat;
-    this.formatTime = timeFormat(this.time, "yyyy-mm-dd hh:MM");
     let boxTop = 0;
     let scrollTop = 0;
     let boxHeight = 0;
-    this.warnData.map((item) => {
-      this.$set(item, "moveX", 0);
-    });
-    console.log(this.warnData[0]);
     this.$nextTick(() => {
       const query = uni.createSelectorQuery().in(this);
       query
@@ -446,18 +261,97 @@ export default {
       this.scrollHeight = boxHeight - scrollTop + boxTop;
     });
   },
+  onShow() {
+    this.caseType = null;
+    this.filterIndex = null;
+    this.warningLevel = null;
+    this.statusIndex = null;
+    this.choosen = 0;
+    this.getRealList();
+  },
   methods: {
-    setTime(e) {
-      const timeFormat = uni.$u.timeFormat;
-      this.show = false;
-      this.time = e.value;
-      this.formatTime = timeFormat(e.value, "yyyy-mm-dd hh:MM");
+    alert() {
+      uni.showToast({
+        title: "已向相关部门发送通知",
+        duration: 2000,
+        icon: "none",
+      });
     },
     setFilter(e) {
+      this.caseType = this.filterValue[e.indexs[0]];
+      this.filterIndex = e.indexs[0];
       this.showFilter = false;
+      if (this.choosen) {
+        this.getHistoryList();
+      } else {
+        this.getRealList();
+      }
     },
     setStatus(e) {
+      this.warningLevel = this.statusValue[e.indexs[0]];
+      this.statusIndex = e.indexs[0];
       this.showStatus = false;
+      if (this.choosen) {
+        this.getHistoryList();
+      } else {
+        this.getRealList();
+      }
+    },
+    getRealList() {
+      const data = {
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+        status: 0,
+      };
+      if (this.caseType) {
+        data.caseType = this.caseType;
+      }
+      if (this.warningLevel) {
+        data.warningLevel = this.warningLevel;
+      }
+      uni.$http.get("/api/v1/alarm/query", data).then(({ data }) => {
+        console.log(data);
+        this.warnData = data.data.alarmList;
+        if (data.data.count < this.pageSize) {
+          this.warnIsAll = true;
+        }
+        this.warnData.map((item) => {
+          this.$set(item, "moveX", 0);
+        });
+      });
+    },
+    getHistoryList() {
+      const data = {
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+        status: 1,
+      };
+      if (this.caseType) {
+        data.caseType = this.caseType;
+      }
+      if (this.warningLevel) {
+        data.warningLevel = this.warningLevel;
+      }
+      uni.$http.get("/api/v1/alarm/query", data).then(({ data }) => {
+        this.historyData = data.data.alarmList;
+        if (data.data.count < this.pageSize) {
+          this.hisIsAll = true;
+        }
+        this.historyData.map((item) => {
+          this.$set(item, "moveX", 0);
+        });
+      });
+    },
+    reset() {
+      this.caseType = null;
+      this.filterIndex = null;
+      this.warningLevel = null;
+      this.statusIndex = null;
+      if (this.choosen) {
+        this.getHistoryList();
+      } else {
+        this.getRealList();
+      }
     },
     jump() {
       uni.navigateTo({
@@ -483,15 +377,80 @@ export default {
       else item.moveX = 0;
     },
     check(index) {
+      this.index = index;
       this.showVideo = true;
       this.warnData[index].moveX = 0;
     },
     deal(index) {
+      this.index = index;
       this.showDeal = true;
       this.warnData[index].moveX = 0;
     },
     deleteItem(index) {
       this.warnData[index].moveX = 0;
+      uni.showModal({
+        title: "警告",
+        content: "是否要删除该项?",
+        showCancel: true,
+        success: () => {
+          let alarmId = this.choosen
+            ? this.historyData[index].id
+            : this.warnData[index].id;
+          uni.$http.delete(`/api/v1/alarm/${alarmId}`).then(() => {
+            if (this.choosen) {
+              this.getHistoryList();
+            } else {
+              this.getRealList();
+            }
+          });
+        },
+      });
+    },
+    setContent(val, id) {
+      console.log(val, id);
+      this.content = val;
+      this.id = id;
+    },
+    async sendDeal() {
+      if (this.conten === "") {
+        uni.showToast({
+          title: "内容不能为空",
+          duration: 2000,
+          icon: "none",
+        });
+        return;
+      }
+      const data = {
+        id: this.id,
+        status: 1,
+        processingContent: this.content,
+      };
+      await uni.$http.put("/api/v1/alarm/update", data).then(({ data }) => {
+        console.log(data);
+        if (this.choosen) {
+          this.getHistoryList();
+        } else {
+          this.getRealList();
+        }
+      });
+      this.showDeal = false;
+      this.content = "";
+      this.id = null;
+    },
+  },
+  watch: {
+    choosen: {
+      handler(newVal) {
+        this.caseType = null;
+        this.filterIndex = null;
+        this.warningLevel = null;
+        this.statusIndex = null;
+        if (newVal === 1) {
+          this.getHistoryList();
+        } else {
+          this.getRealList();
+        }
+      },
     },
   },
 };
@@ -517,18 +476,49 @@ export default {
     align-items: center;
     margin-bottom: 5%;
     // border-bottom: 1px solid red;
-    h2 {
-      position: relative;
-    }
-    h2::after {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 30%;
-      bottom: 2px;
-      left: 0;
-      background: #9eb3ff;
-      z-index: -1;
+    .topNav {
+      width: 445rpx;
+      display: flex;
+      justify-content: space-between;
+      .left {
+        // border: 2px solid pink;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        span {
+          font-size: 38rpx;
+        }
+      }
+      .choosen {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        span {
+          font-size: 38rpx;
+          position: relative;
+        }
+        h2::after {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 28%;
+          left: 0;
+          bottom: 2px;
+          background: #9eb3ff;
+          z-index: -1;
+          border-radius: 5rpx;
+          font-size: 80rpx;
+        }
+      }
+      .right {
+        // border: 2px solid pink;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        span {
+          font-size: 38rpx;
+        }
+      }
     }
     .icon {
       // background: #000;
@@ -589,8 +579,9 @@ export default {
         }
         .timeText {
           font-size: 28rpx;
+          width: 110px;
           position: absolute;
-          right: 4%;
+          right: 0;
           color: #b5b5b5;
         }
       }
@@ -753,48 +744,6 @@ export default {
             width: 34rpx;
           }
         }
-      }
-    }
-  }
-  .informBox {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    .video {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 32rpx;
-      width: 328px;
-      height: 246px;
-    }
-    .contents {
-      width: 100%;
-      font-size: 38rpx;
-      .line {
-        width: 100%;
-        display: flex;
-        .column {
-          height: 100rpx;
-          width: 50%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .left {
-          background-color: #e0e0e0;
-        }
-        .dealt {
-          color: #06bfa1;
-        }
-        .unDealt {
-          color: #ff5d5d;
-        }
-      }
-      .textarea {
-        border: 1px solid #b0b1b1;
-        border-radius: 15rpx;
       }
     }
   }

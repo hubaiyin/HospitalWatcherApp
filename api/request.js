@@ -9,8 +9,7 @@ uni.$showMsg = function (title = "数据加载失败", duration = 1500) {
 }
 
 uni.$http = $http;
-// $http.baseUrl = "http://127.0.0.1:4523/m1/3273039-0-default";
-$http.baseUrl = "http://192.168.115.130:4523/m1/3273039-0-default";
+$http.baseUrl = "http://101.43.254.115:10115";
 $http.beforeRequest = function (options) {
     let token = uni.getStorageSync('token')
     let header = {};
