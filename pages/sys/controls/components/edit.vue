@@ -3,7 +3,7 @@
     :show="showEdit"
     :closeOnClickOverlay="true"
     :showCancelButton="true"
-    @confirm="changeShow"
+    @confirm="checkChange"
     @cancel="changeShow"
     @close="changeShow"
     width="348px"
@@ -11,7 +11,7 @@
     <view class="informBox">
       <view class="titleBox">
         <view class="title">
-          {{ warnData[0].name }}
+          {{ warnData.name }}
         </view>
         <view class="img" @tap="locked = !locked">
           <image
@@ -24,9 +24,26 @@
       </view>
       <view class="video">
         <video
-          src=""
-          style="height: 100%; width: 100%; object-fit: fill"
-        ></video>
+          :src="warnData.video"
+          style="
+            height: 100%;
+            width: 100%;
+            object-fit: fill;
+            position: relative;
+          "
+        >
+          <cover-view
+            class="border"
+            v-for="(box, index) in border"
+            :key="index"
+            :style="{
+              width: box.rightX - box.leftX + 'px',
+              height: box.rightY - box.leftY + 'px',
+              top: box.leftY + 'px',
+              left: box.leftX + 'px',
+            }"
+          ></cover-view>
+        </video>
       </view>
       <view class="scroll">
         <view class="edit">
@@ -35,6 +52,7 @@
             src="../../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png"
             mode="aspectFit"
             style="width: 40rpx; height: 40rpx"
+            @tap="resetBorder"
           ></image>
         </view>
         <view class="img">
@@ -53,13 +71,18 @@
             @touchend="stop"
             :disable-scroll="!locked"
           ></canvas>
+          <image
+            src="../../../../static/logBack.jpeg"
+            mode="aspectFit"
+            style="width: 100%; height: 100%"
+          ></image>
           <view
             class="border"
-            v-for="box in border"
-            :key="box.id"
+            v-for="(box, index) in border"
+            :key="index"
             :style="{
-              width: box.width + 'px',
-              height: box.height + 'px',
+              width: box.rightX - box.leftX + 'px',
+              height: box.rightY - box.leftY + 'px',
               top: box.leftY + 'px',
               left: box.leftX + 'px',
             }"
@@ -72,26 +95,31 @@
             src="../../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png"
             mode="aspectFit"
             style="width: 40rpx; height: 40rpx"
+            @tap="reset"
           ></image>
         </view>
         <view class="options">
           <view class="uni-list">
             <checkbox-group @change="checkboxChange">
-              <view class="borderBox" v-for="item in items" :key="item.value">
+              <view
+                class="borderBox"
+                v-for="item in ability"
+                :key="item.value"
+              >
                 <label class="uni-list-cell uni-list-cell-pd checkbox">
                   <view>
                     <checkbox :value="item.value" :checked="item.checked" />
                   </view>
                   <view>{{ item.name }}</view>
                 </label>
-                <view class="time">
+                <!-- <view class="time">
                   <input
                     type="number"
                     v-model="item.time"
                     style="width: 100%; height: 100%; text-align: center"
                     @input="limitation(item)"
                   />
-                </view>
+                </view> -->
               </view>
             </checkbox-group>
           </view>
@@ -102,7 +130,6 @@
 </template>
 
 <script>
-import moment from "moment";
 import { throttle } from "lodash";
 export default {
   name: "Edit",
@@ -111,8 +138,11 @@ export default {
       type: Boolean,
     },
     warnData: {
-      type: Array,
+      type: Object,
     },
+  },
+  mounted() {
+    console.log(this.warnData);
   },
   data() {
     return {
@@ -122,48 +152,10 @@ export default {
         x: null,
         y: null,
       },
-      border: [],
-      video: "",
+      border: this.warnData.border,
       borData: {},
       painting: false,
-      items: [
-        {
-          value: "danger",
-          name: "进入危险区",
-          checked: true,
-          time: 60,
-        },
-        {
-          value: "drop",
-          name: "摔跤",
-          checked: false,
-          time: 60,
-        },
-        {
-          value: "stay",
-          name: "停留时间过长",
-          checked: true,
-          time: 60,
-        },
-        {
-          value: "fire",
-          name: "明火",
-          checked: false,
-          time: 60,
-        },
-        {
-          value: "smoke",
-          name: "烟雾",
-          checked: false,
-          time: 60,
-        },
-        {
-          value: "smoking",
-          name: "吸烟",
-          checked: true,
-          time: 60,
-        },
-      ],
+      ability: JSON.parse(JSON.stringify(this.warnData.ability)),
     };
   },
   methods: {
@@ -199,15 +191,14 @@ export default {
     stop() {
       if (this.locked) return;
       this.painting = false;
-      this.border.push({
-        width: this.borData.maxX - this.borData.minX,
-        height: this.borData.maxY - this.borData.minY,
-        id: moment().format("MMMM Do YYYY, h:mm:ss a"),
-        leftY: this.borData.minY,
-        leftX: this.borData.minX,
-        rightY: this.borData.maxY,
-        rightX: this.borData.maxX,
-      });
+      this.border = [
+        {
+          leftY: this.borData.minY,
+          leftX: this.borData.minX,
+          rightY: this.borData.maxY,
+          rightX: this.borData.maxX,
+        },
+      ];
       this.borData = {};
       console.log("end");
     },
@@ -220,9 +211,58 @@ export default {
     changeShow() {
       this.$emit("change");
     },
+    reset() {
+      console.log("bye");
+      this.ability = [
+        {
+          value: 1,
+          name: "进入危险区",
+          checked: false,
+        },
+        {
+          value: 2,
+          name: "烟雾",
+          checked: false,
+        },
+        {
+          value: 3,
+          name: "摔倒",
+          checked: false,
+        },
+        {
+          value: 4,
+          name: "明火",
+          checked: false,
+        },
+        {
+          value: 5,
+          name: "吸烟",
+          checked: false,
+        },
+      ];
+    },
+    resetBorder() {
+      console.log("hi");
+      this.border = [];
+    },
+    checkChange() {
+      uni.showModal({
+        title: "警告",
+        content: "确定修改?",
+        showCancel: true,
+        success: () => {
+          const data = {
+            id: this.warnData.id,
+            border: this.border,
+            ability: this.ability,
+          };
+          this.$emit("change", data);
+        },
+      });
+    },
     checkboxChange(e) {
       let values = e.target.value;
-      this.items.forEach((item) => {
+      this.ability.forEach((item) => {
         if (values.includes(item.value)) {
           item.checked = true;
         }
@@ -241,6 +281,10 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  .border {
+    border: 1px solid red;
+    position: absolute;
+  }
   .titleBox {
     width: 100%;
     display: flex;
@@ -254,7 +298,6 @@ export default {
     .img {
       width: 48rpx;
       height: 48rpx;
-      background-color: red;
       image {
         height: 100%;
         width: 100%;
@@ -280,10 +323,6 @@ export default {
       height: 246px;
       background-color: pink;
       position: relative;
-      .border {
-        border: 1px solid red;
-        position: absolute;
-      }
     }
     .edit {
       width: 100%;
@@ -303,7 +342,7 @@ export default {
         margin: 0 auto;
         width: 90%;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         margin-top: 10px;
         .checkbox {
           display: flex;
@@ -311,7 +350,7 @@ export default {
           border: 1px solid grey;
           padding: 4px;
           padding-top: 2px;
-          width: 54%;
+          width: 50%;
           border-radius: 4px;
         }
         .time {

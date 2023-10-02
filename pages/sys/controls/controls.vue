@@ -63,7 +63,7 @@
         class="content"
         :style="{ height: scrollHeight + 'px' }"
       >
-        <view class="details" v-for="item in warnData" :key="item.id">
+        <view class="details" v-for="(item, index) in warnData" :key="item.id">
           <view class="deviceName">
             {{ item.name }}
           </view>
@@ -73,7 +73,7 @@
             <view class="time"> 区域负责人：{{ item.leader }} </view>
           </view>
           <view class="buttons">
-            <view class="button" @click="showEdit = true">
+            <view class="button" @click="edit(index)">
               <image
                 src="../../../static/edit.png"
                 mode="aspectFit"
@@ -108,7 +108,12 @@
         </view>
       </scroll-view>
     </view>
-    <Edit :showEdit="showEdit" @change="changeShow" :warnData="warnData"></Edit>
+    <Edit
+      :showEdit="showEdit"
+      @change="changeShow"
+      :warnData="warnData[index]"
+      v-if="showEdit"
+    ></Edit>
   </view>
 </template>
 
@@ -128,6 +133,7 @@ export default {
       showDelete: false,
       choosen: 2,
       scrollHeight: 0,
+      index: 0,
       markers: [
         {
           id: 1221,
@@ -137,18 +143,6 @@ export default {
           width: 32,
           height: 32,
           title: "智慧摄像头-1",
-          callout: {
-            content: "欢迎来到这里", //文本
-            color: "#fff", //文本颜色
-            fontSize: 12, //文字大小
-            borderRadius: 3, //callout边框圆角
-            borderWidth: 30, //边框宽度
-            borderColor: "", //边框颜色
-            bgColor: "#31c27c", //背景色
-            padding: 3, //文本边缘留白
-            display: "ALWAYS", //'BYCLICK':点击显示; 'ALWAYS':常显
-            textAlign: "center", //文本对齐方式。有效值: left, right, center
-          },
         },
       ],
       warnData: [
@@ -162,20 +156,37 @@ export default {
           running: true,
           border: [],
           video: "",
+          img: "",
+          ability: [
+            // value根据你那边caseType决定
+            {
+              value: 1,
+              name: "进入危险区",
+              checked: true,
+            },
+            {
+              value: 2,
+              name: "烟雾",
+              checked: false,
+            },
+            {
+              value: 3,
+              name: "摔倒",
+              checked: false,
+            },
+            {
+              value: 4,
+              name: "明火",
+              checked: false,
+            },
+            {
+              value: 5,
+              name: "吸烟",
+              checked: true,
+            },
+          ],
         },
         {
-          id: "114514",
-          name: "智能摄像头-3",
-          deal: "停用",
-          number: "A102",
-          department: "急诊部",
-          leader: "潇迪",
-          running: false,
-          border: [],
-          video: "",
-        },
-        {
-          id: "191919",
           name: "智能摄像头-4",
           deal: "正在运行",
           number: "A103",
@@ -184,25 +195,12 @@ export default {
           running: true,
           border: [
             {
-              //对应勾选的框框，要有清除框框的接口
-              id: "114514",
-              width: 128,
-              height: 244,
               // 左上角
               leftY: 12,
               leftX: 33,
               // 右下角
               rightY: 140,
-              rightX: 277,
-            },
-            {
-              id: "10086",
-              width: 118,
-              height: 124,
-              top: 12,
-              left: 33,
-              right: 161,
-              bottom: 256,
+              rightX: 161,
             },
           ],
           video: "",
@@ -212,51 +210,29 @@ export default {
             {
               value: 1,
               name: "进入危险区",
-              checked: true,
-              time: 60,
+              checked: false,
             },
             {
               value: 2,
               name: "烟雾",
-              checked: false,
-              time: 60,
+              checked: true,
             },
             {
               value: 3,
-              name: "区域停留",
-              checked: true,
-              time: 60,
-            },
-            {
-              value: 103,
               name: "摔倒",
               checked: false,
-              time: 60,
             },
             {
-              value: 104,
+              value: 4,
               name: "明火",
-              checked: false,
-              time: 60,
+              checked: true,
             },
             {
-              value: 105,
+              value: 5,
               name: "吸烟",
-              checked: true,
-              time: 60,
+              checked: false,
             },
           ], //该摄像头要发挥的功能
-        },
-        {
-          id: "2203",
-          name: "智能摄像头-2",
-          deal: "停用",
-          number: "A101",
-          department: "大厅",
-          leader: "阿为",
-          running: false,
-          border: [],
-          video: "",
         },
       ],
       dealIcon: [
@@ -266,8 +242,8 @@ export default {
     };
   },
   methods: {
-    changeShow() {
-      console.log("被触发了");
+    changeShow(data) {
+      console.log("被触发了", data);
       this.showEdit = false;
     },
     jump() {
@@ -279,6 +255,10 @@ export default {
       console.log("hi");
       this.longitude = 116;
       this.latitude = 39;
+    },
+    edit(index) {
+      this.index = index;
+      this.showEdit = true;
     },
   },
   onLoad() {
