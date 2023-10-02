@@ -10,15 +10,10 @@
   
   <script>
   export default {
-    props: {
-        template: {
-            type: Array,
-            required: true,
-        },
-    },
     data() {
       return {
         chartData:{},
+        result:[],
         opts: {
           rotate: false,
           rotateLock: false,
@@ -57,20 +52,45 @@
       };
     },
     mounted() {
-        this.getData();
+      this.getServerData();
     },
     methods: {
-        getData(){
-            let res = {
-                series: [
-                    {
-                    //   data: [{"name":"一班","value":50},{"name":"二班","value":30},{"name":"三班","value":20},{"name":"四班","value":18,"labelText":"四班:18人"},{"name":"五班","value":8}]
-                    data: this.template
-                    }
-                ]
+      async getData() {
+        await uni.$http.get("/api/v1/alarm/realtime")
+        .then(res => {
+          if(res.data.code !== "00000") {
+            uni.showToast({
+              title: "获取图表数据失败",
+              duration: 1500,
+              icon: "none",
+            })
+          }
+          else {
+            const temp = [
+              {'name':'长时停留'  , 'value': 129},
+              {'name':res.data.data.alarmCaseTypeTotalList[0].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[0].total},
+              {'name':res.data.data.alarmCaseTypeTotalList[1].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[1].total},
+              {'name':res.data.data.alarmCaseTypeTotalList[2].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[2].total},
+              {'name':res.data.data.alarmCaseTypeTotalList[3].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[3].total},
+              {'name':res.data.data.alarmCaseTypeTotalList[4].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[4].total},
+            ]
+            this.result = temp;
+          }
+        })
+      },
+      async getServerData() {
+        let res = {
+          series:[
+            {
+              data:[],
             }
-            this.chartData = JSON.parse(JSON.stringify(res))
+          ]
         }
+        res.series[0].data = this.result;
+        setTimeout(() => {
+          this.chartData = JSON.parse(JSON.stringify(res));
+        }, 500);
+      },
     }
   };
   </script>
@@ -79,3 +99,4 @@
     /* 请根据实际需求修改父元素尺寸，组件自动识别宽高 */
 
   </style>
+    

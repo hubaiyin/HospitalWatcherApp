@@ -95,7 +95,7 @@ export default {
           }
         }
         this.chartData = JSON.parse(JSON.stringify(res));
-      }, 5000);
+      }, 2500);
     },
   },
   watch: {
