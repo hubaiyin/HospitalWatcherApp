@@ -68,7 +68,7 @@
           else {
             const temp = [
               {'name':'长时停留'  , 'value': 129},
-              {'name':res.data.data.alarmCaseTypeTotalList[0].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[0].total},
+              {'name':'进入禁区','value':res.data.data.alarmCaseTypeTotalList[0].total},
               {'name':res.data.data.alarmCaseTypeTotalList[1].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[1].total},
               {'name':res.data.data.alarmCaseTypeTotalList[2].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[2].total},
               {'name':res.data.data.alarmCaseTypeTotalList[3].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[3].total},
@@ -86,7 +86,9 @@
             }
           ]
         }
+        await this.getData();
         res.series[0].data = this.result;
+        console.log(res);
         setTimeout(() => {
           this.chartData = JSON.parse(JSON.stringify(res));
         }, 500);
