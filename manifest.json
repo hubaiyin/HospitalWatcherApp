@@ -1,6 +1,6 @@
 {
     "name" : "HospitalWatcherApp",
-    "appid" : "__UNI__325A204",
+    "appid" : "__UNI__99942BA",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -12,7 +12,7 @@
         "compilerVersion" : 3,
         "splashscreen" : {
             "alwaysShowBeforeRender" : true,
-            "waiting" : true,
+            "waiting" : false,
             "autoclose" : true,
             "delay" : 0
         },
@@ -70,7 +70,6 @@
                 },
                 "push" : {
                     "unipush" : {
-                        "version" : "2",
                         "offline" : true,
                         "hms" : {},
                         "oppo" : {},
@@ -79,6 +78,15 @@
                         "meizu" : {}
                     }
                 }
+            },
+            "splashscreen" : {
+                "androidStyle" : "default",
+                "android" : {
+                    "hdpi" : "/Users/hubaiyin/Downloads/res/drawable-hdpi/textback.9.png",
+                    "xhdpi" : "/Users/hubaiyin/Downloads/res/drawable-xhdpi/textback.9.png",
+                    "xxhdpi" : "/Users/hubaiyin/Downloads/res/drawable-xxhdpi/textback.9.png"
+                },
+                "iosStyle" : "storyboard"
             }
         }
     },
