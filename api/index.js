@@ -46,8 +46,9 @@ class Request {
 				success: (res) => {
 					resolve(res);
 				},
-				fail: (err) => { reject(err) },
+				fail: (err) => {reject(err) },
 				complete: (res) => {
+					console.log(res)
 					this.afterRequest && typeof this.afterRequest === 'function' && this.afterRequest(res);
 				}
 			})

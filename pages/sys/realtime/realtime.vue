@@ -213,8 +213,8 @@ export default {
       status: [["1级", "2级", "3级"]],
       statusValue: [1, 2, 3],
       statusIndex: null,
-      filters: [["进入危险区域", "烟雾", "区域停留", "摔倒", "明火", "吸烟"]],
-      filterValue: [100, 101, 102, 103, 104, 105],
+      filters: [["进入危险区域", "烟雾",  "摔倒", "明火", "吸烟"]],
+      filterValue: [1, 2, 3, 4, 5],
       filterIndex: null,
       scrollHeight: 0,
       choosen: 0,
@@ -262,11 +262,11 @@ export default {
     });
   },
   onShow() {
+	this.choosen = 0;
     this.caseType = null;
     this.filterIndex = null;
     this.warningLevel = null;
     this.statusIndex = null;
-    this.choosen = 0;
     this.getRealList();
   },
   methods: {
@@ -379,15 +379,21 @@ export default {
     check(index) {
       this.index = index;
       this.showVideo = true;
-      this.warnData[index].moveX = 0;
+      this.resetX(index)
     },
     deal(index) {
       this.index = index;
       this.showDeal = true;
-      this.warnData[index].moveX = 0;
+	  this.resetX(index)
     },
+	resetX(index){
+		if(this.choosen){
+				  this.historyData[index].moveX = 0;
+		}
+		else this.warnData[index].moveX = 0;
+	},
     deleteItem(index) {
-      this.warnData[index].moveX = 0;
+      this.resetX(index)
       uni.showModal({
         title: "警告",
         content: "是否要删除该项?",

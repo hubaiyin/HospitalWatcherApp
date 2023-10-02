@@ -219,7 +219,7 @@ export default {
                 data: data.data.token,
                 success: () => {
                   uni.switchTab({
-                    url: "/pages/sys/home/home",
+                    url: "pages/sys/dateWatcher/dateWatcher",
                   });
                 },
               });

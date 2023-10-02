@@ -100,7 +100,7 @@ export default {
             }
         }
         this.chartData = JSON.parse(JSON.stringify(res));
-      }, 2500);
+      }, 5000);
     },
   },
   watch: {

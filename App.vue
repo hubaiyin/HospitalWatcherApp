@@ -4,8 +4,9 @@ export default {
     console.log("App Launch");
     if (uni.getStorageSync("token")) {
       setTimeout(() => {
+		  console.log('hi')
         uni.switchTab({
-          url: "/pages/sys/realtime/realtime",
+          url: "/pages/sys/dateWatcher/dateWatcher",
         });
       }, 2000);
     } else {
