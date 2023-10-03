@@ -90,7 +90,10 @@
       <scroll-view
         class="content"
         scroll-y="true"
+        :scroll-top="scrollTop"
         :style="{ height: scrollHeight + 'px' }"
+        @scrolltolower="getMore"
+        @scroll="getTop"
       >
         <view
           class="box"
@@ -160,6 +163,7 @@
             </view>
           </view>
         </view>
+        <u-loadmore :status="statusList"></u-loadmore>
       </scroll-view>
       <u-modal
         style="position: absolute"
@@ -204,6 +208,9 @@ export default {
   },
   data() {
     return {
+      top: 0,
+      scrollTop: 0,
+      statusList: "loading",
       moveX: 0,
       startX: 0,
       safeAreaTop: 0,
@@ -213,12 +220,12 @@ export default {
       status: [["1级", "2级", "3级"]],
       statusValue: [1, 2, 3],
       statusIndex: null,
-      filters: [["进入危险区域", "烟雾",  "摔倒", "明火", "吸烟"]],
+      filters: [["进入危险区域", "烟雾", "摔倒", "明火", "吸烟"]],
       filterValue: [1, 2, 3, 4, 5],
       filterIndex: null,
       scrollHeight: 0,
       choosen: 0,
-      pageSize: 10,
+      pageSize: 6,
       pageNum: 1,
       warnIsAll: false,
       hisIsAll: false,
@@ -262,7 +269,8 @@ export default {
     });
   },
   onShow() {
-	this.choosen = 0;
+    console.log("realShow");
+    this.choosen = 0;
     this.caseType = null;
     this.filterIndex = null;
     this.warningLevel = null;
@@ -296,6 +304,66 @@ export default {
       } else {
         this.getRealList();
       }
+    },
+    getMore(e) {
+      if (this.choosen && !this.hisIsAll) {
+        this.pageNum++;
+        const data = {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+          status: 1,
+        };
+        if (this.caseType) {
+          data.caseType = this.caseType;
+        }
+        if (this.warningLevel) {
+          data.warningLevel = this.warningLevel;
+        }
+        uni.$http.get("/api/v1/alarm/query", data).then(({ data }) => {
+          this.historyData.push(...data.data.alarmList);
+          if (data.data.count < this.pageSize) {
+            this.hisIsAll = true;
+            this.statusList = "nomore";
+          }
+          this.historyData.map((item) => {
+            this.$set(item, "moveX", 0);
+          });
+          this.scrollTop = this.top;
+        });
+      } else if (this.choosen && this.hisIsAll) {
+        return;
+      } else if (!this.choosen && !this.warnIsAll) {
+        console.log("0 more");
+        this.pageNum++;
+        const data = {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+          status: 0,
+        };
+        console.log(data);
+        if (this.caseType) {
+          data.caseType = this.caseType;
+        }
+        if (this.warningLevel) {
+          data.warningLevel = this.warningLevel;
+        }
+        uni.$http.get("/api/v1/alarm/query", data).then(({ data }) => {
+          console.log(data);
+          this.warnData.push(...data.data.alarmList);
+          if (data.data.count < this.pageSize) {
+            this.warnIsAll = true;
+            this.statusList = "nomore";
+          }
+          this.warnData.map((item) => {
+            this.$set(item, "moveX", 0);
+          });
+        });
+      } else if (!this.choosen && this.warnIsAll) {
+        return;
+      }
+    },
+    getTop(e) {
+      this.top = e.detail.scrollTop;
     },
     getRealList() {
       const data = {
@@ -347,6 +415,7 @@ export default {
       this.filterIndex = null;
       this.warningLevel = null;
       this.statusIndex = null;
+      this.pageNum = 1;
       if (this.choosen) {
         this.getHistoryList();
       } else {
@@ -379,26 +448,26 @@ export default {
     check(index) {
       this.index = index;
       this.showVideo = true;
-      this.resetX(index)
+      this.resetX(index);
     },
     deal(index) {
       this.index = index;
       this.showDeal = true;
-	  this.resetX(index)
+      this.resetX(index);
     },
-	resetX(index){
-		if(this.choosen){
-				  this.historyData[index].moveX = 0;
-		}
-		else this.warnData[index].moveX = 0;
-	},
+    resetX(index) {
+      if (this.choosen) {
+        this.historyData[index].moveX = 0;
+      } else this.warnData[index].moveX = 0;
+    },
     deleteItem(index) {
-      this.resetX(index)
+      this.resetX(index);
       uni.showModal({
         title: "警告",
         content: "是否要删除该项?",
         showCancel: true,
         success: () => {
+          this.pageNum = 1;
           let alarmId = this.choosen
             ? this.historyData[index].id
             : this.warnData[index].id;
@@ -447,10 +516,12 @@ export default {
   watch: {
     choosen: {
       handler(newVal) {
+        this.pageNum = 1;
         this.caseType = null;
         this.filterIndex = null;
         this.warningLevel = null;
         this.statusIndex = null;
+        this.statusList = "loading";
         if (newVal === 1) {
           this.getHistoryList();
         } else {
