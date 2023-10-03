@@ -77,10 +77,31 @@
 				else {
 					console.log("输入的消息为：" + this.text);
 					this.textList.push(this.text);
-					this.text="";
 					this.toBottom();
 					this.count ++;
+					this.getAnswer();
+					this.text="";
 				}	
+			},
+			getAnswer(){
+				const data = {
+					id:1,
+					message: this.text
+				}
+				uni.$http.post("/api/v1/gpt" , data)
+				.then(res => {
+					console.log(res);
+					if(res.data.code != "00000") {
+						uni.showToast({
+							title: "发送失败，请稍后重试！",
+							duration: 1500,
+							icon: "none"
+						})
+					}
+					else {
+						this.textList.push(res.data.data)
+					}
+				})
 			},
 			recordHeight(e) {
 				this.newTop = e.detail.scrollTop;

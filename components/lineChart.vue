@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-
+      result:{},
       chartData: {},
       //您可以通过修改 config-ucharts.js 文件中下标为 ['line'] 的节点来配置全局默认参数，如都是默认参数，此处可以不传 opts 。实际应用过程中 opts 只需传入与全局默认参数中不一致的【某一个属性】即可实现同类型的图表显示不同的样式，达到页面简洁的需求。
       opts: {
@@ -44,58 +44,52 @@ export default {
     };
   },
   mounted() {
-    this.getServerData();
+    this.getServerData(1);
   },
   methods: {
-    getServerData(val) {
-      console.log("range为：" , val);
-      //模拟从服务器获取数据时的延时
+    async getData(range){
+      let data = {
+        defer: range
+      }
+      await uni.$http.get("/api/v1/alarm/query/cnt/history" , data)
+      .then(res => {
+        console.log(res);
+        if(res.data.code !== "00000") {
+          uni.showToast({
+            title: "获取图表数据失败",
+            duration: 1500,
+            icon: "none",
+          })
+        }
+        else {
+          let temp = {
+            time:[],
+            data:[]
+          }
+          res.data.data.graph1.forEach(item => {
+            temp.time.push(item.period);
+            temp.data.push(item.cnt);
+          });
+          this.result = temp;
+        }
+      })
+    },
+    async getServerData(range) {
+      let res = {
+        categories:[],
+        series: [
+          {
+            name: "事件总数",
+            data: []
+          }
+        ]
+      }
+      await this.getData(range);
+      res.categories = this.result.time;
+      res.series[0].data = this.result.data;
       setTimeout(() => {
-        //模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
-        let res = {
-          categories: ["00:00","06:00","09:00","12:00","17:00","20:00"],
-          series: [
-              {
-                  name: "事件总数",
-                  data: [0,3,5,9,12,23]
-              },
-          ] 
-        };
-        if (val == 1) {
-          res = {
-            categories: ["00:00","06:00","09:00","12:00","17:00","20:00"],
-            series: [
-                {
-                    name: "事件总数",
-                    data: [0,3,5,9,12,23]
-                },
-            ] 
-          }
-        }
-        if(val == 3) {
-          res = {
-            categories: ["9.28","9.29","9.30"],
-            series: [
-                {
-                    name: "事件总数",
-                    data: [52,45,55]
-                },
-            ]
-          }
-        }
-        if(val == 7) {
-          res = {
-            categories: ["9.25","9.26","9.27","9.28","9.29","9.30"],
-            series: [
-                {
-                    name: "事件总数",
-                    data: [50,42,34,52,45,55]
-                },
-            ]
-          }
-        }
         this.chartData = JSON.parse(JSON.stringify(res));
-      }, 5000);
+      }, 2500);
     },
   },
   watch: {

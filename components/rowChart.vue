@@ -52,56 +52,52 @@ export default {
     };
   },
     mounted() {
-    this.getServerData();
+    this.getServerData(1);
   },
   methods: {
-    getServerData(val) {
-      setTimeout(() => {
+    async getData(range) {
+        let data = {
+          defer: range
+        }
+        await uni.$http.get("/api/v1/alarm/query/cnt/history" , data)
+        .then(res => {
+          if(res.data.code !== "00000") {
+            uni.showToast({
+              title: "获取图表数据失败",
+              duration: 1500,
+              icon: "none",
+            })
+          }
+          else {
+            let temp = {
+              name:[],
+              data:[]
+            }
+            res.data.data.graph2.forEach(item => {
+              temp.name.push(item.period);
+              temp.data.push(item.cnt);
+            });
+            this.result = temp;
+          }
+        })
+      },
+      async getServerData(range) {
         let res = {
-            categories: ["急诊大厅","病房1楼走廊","病房2楼走廊","发热门诊大厅","精神科走廊"],
-            series: [
-              {
-                name: "目标值",
-                data: [12,3,5,18,2]
-              }
-            ]
+          categories: [],
+          series: [
+            {
+              name: "各区域报警数量",
+              data: []
+            },
+          ]
         };
-        if(val == 1) {
-            res = {
-                categories: ["急诊大厅","病房1楼走廊","病房2楼走廊","发热门诊大厅","精神科走廊"],
-                series: [
-                    {
-                        name: "目标值",
-                        data: [12,3,5,18,2]
-                    }
-                ]
-            }
-        }
-        if(val == 3) {
-            res = {
-                categories: ["急诊大厅","病房1楼走廊","病房2楼走廊","发热门诊大厅","精神科走廊"],
-                series: [
-                    {
-                        name: "目标值",
-                        data: [35,23,43,33,15]
-                    }
-                ]
-            }
-        }
-        if(val == 7) {
-            res = {
-                categories: ["急诊大厅","病房1楼走廊","病房2楼走廊","发热门诊大厅","精神科走廊"],
-                series: [
-                    {
-                        name: "目标值",
-                        data: [45,35,45,38,20]
-                    }
-                ]
-            }
-        }
-        this.chartData = JSON.parse(JSON.stringify(res));
-      }, 5000);
-    },
+        await this.getData(range);
+        res.categories = this.result.name;
+        res.series[0].data = this.result.data;
+        setTimeout(() => {
+          this.chartData = JSON.parse(JSON.stringify(res));
+        }, 2500);
+      },
   },
   watch: {
     range: {

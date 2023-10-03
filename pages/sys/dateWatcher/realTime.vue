@@ -2,16 +2,16 @@
     <view class="body">
         <view class="total">
             <view class="left">
-                <span>今日报警数：71</span>
-                <span>总报警数：1982</span>
-                <span>较昨日变化：+35</span>
+                <span>今日报警数：{{ upTotal.todayNew }}</span>
+                <span>总报警数：{{ upTotal.total }}</span>
+                <span>较昨日变化：{{ upTotal.dayChange }}</span>
             </view>
             <view class="right">
                 <image src="../../../static/analysis.png" mode="aspectFit" alt=""></image>
             </view>
         </view>		 
         <view class="chart">
-            <ring-chart :template="chartData"></ring-chart>
+            <ring-chart></ring-chart>
         </view>
         <view class="category">
             <!--  -->
@@ -23,8 +23,8 @@
                     <view class="titleText">危险区域</view>
                 </view>
                 <view class="text">
-                    <span>总事件数：271</span>
-                    <span>今日新增：23</span>
+                    <span>总事件数：{{ caseList[0].total }}</span>
+                    <span>今日新增：{{ caseList[0].todayNew }}</span>
                 </view>
             </view>
             <!--  -->
@@ -36,8 +36,8 @@
                     <div class="titleText">烟雾</div>
                 </view>
                 <view class="text">
-                    <span>总事件数：72</span>
-                    <span>今日新增：2</span>
+                    <span>总事件数：{{ caseList[1].total }}</span>
+                    <span>今日新增：{{ caseList[1].todayNew }}</span>
                 </view>
             </view>
             <!--  -->
@@ -49,7 +49,7 @@
                     <div class="titleText">长时停留</div>
                 </view>
                 <view class="text">
-                    <span>总事件数：423</span>
+                    <span>总事件数：129</span>
                     <span>今日新增：18</span>
                 </view>
             </view>
@@ -62,8 +62,8 @@
                     <div class="titleText">摔倒</div>
                 </view>
                 <view class="text">
-                    <span>总事件数：138</span>
-                    <span>今日新增：12</span>
+                    <span>总事件数：{{ caseList[2].total }}</span>
+                    <span>今日新增：{{ caseList[2].todayNew }}</span>
                 </view>
             </view>
             <!--  -->
@@ -75,8 +75,8 @@
                     <div class="titleText">明火</div>
                 </view>
                 <view class="text">
-                    <span>总事件数：62</span>
-                    <span>今日新增：2</span>
+                    <span>总事件数：{{ caseList[3].total }}</span>
+                    <span>今日新增：{{ caseList[3].todayNew }}</span>
                 </view>
             </view>
             <!--  -->
@@ -88,8 +88,8 @@
                     <div class="titleText">吸烟</div>
                 </view>
                 <view class="text">
-                    <span>总事件数：376</span>
-                    <span>今日新增：14</span>
+                    <span>总事件数：{{ caseList[4].total }}</span>
+                    <span>今日新增：{{ caseList[4].todayNew }}</span>
                 </view>
             </view>
             <!--  -->
@@ -103,19 +103,52 @@
 		components:{ ringChart },
 		data() {
 			return {
-				safeHeight:0,
-				chartData:[
-					{"name":"长时停留","value":50},
-					{"name":"危险区域","value":30},
-					{"name":"摔倒","value":20},
-					{"name":"吸烟","value":18,},
-					{"name":"明火","value":8},
-					{"name":"烟雾","value":12}
-				]
-			};
-		},
-		onLoad(){
-	
+                upTotal: {},
+				safeHeight: 0,
+                caseList: [
+                    {todayNew:null , total:null},
+                    {todayNew:null , total:null},
+                    {todayNew:null , total:null},
+                    {todayNew:null , total:null},
+                    {todayNew:null , total:null},   
+                ],
+            };
+        },
+        methods: {
+            getInfo(){
+                uni.$http.get("/api/v1/alarm/realtime")
+                .then(res => {
+                    if(res.data.code === "D0400") {
+                        uni.showToast({
+							title: "登录失效，请重新登录！",
+							duration: 1500,
+							icon: "none",
+						})
+                        uni.removeStorage({
+                            key:'token',
+                            success: () => {
+                                uni.reLaunch({
+                                    url: "/pages/sys/login/index",
+                                })
+                            }
+                        })
+                    }
+                    if(res.data.code != "00000") {
+                        uni.showToast({
+							title: "数据加载失败！",
+							duration: 1500,
+							icon: "none"
+						})
+                    }
+                    if(res.data.code === "00000") {
+                        this.upTotal = res.data.data.alarmTotal;
+                        this.caseList = res.data.data.alarmCaseTypeTotalList;
+                    }
+                })
+            }
+        },
+		mounted() {
+            this.getInfo();
 		},
 	}
 </script>
