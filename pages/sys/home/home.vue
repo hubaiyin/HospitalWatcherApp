@@ -41,6 +41,7 @@
 </template>
 
 <script>
+
 	export default {
 		data() {
 			return {
@@ -84,24 +85,7 @@
 				}	
 			},
 			getAnswer(){
-				const data = {
-					id:1,
-					message: this.text
-				}
-				uni.$http.post("/api/v1/gpt" , data)
-				.then(res => {
-					console.log(res);
-					if(res.data.code != "00000") {
-						uni.showToast({
-							title: "发送失败，请稍后重试！",
-							duration: 1500,
-							icon: "none"
-						})
-					}
-					else {
-						this.textList.push(res.data.data)
-					}
-				})
+
 			},
 			recordHeight(e) {
 				this.newTop = e.detail.scrollTop;

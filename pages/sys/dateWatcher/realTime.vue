@@ -33,7 +33,7 @@
                     <view class="icon">
                         <image src="../../../static/fog.png" mode="aspectFit"></image>
                     </view>
-                    <div class="titleText">烟雾</div>
+                    <div class="titleText">挥拳</div>
                 </view>
                 <view class="text">
                     <span>总事件数：{{ caseList[1].total }}</span>
@@ -44,9 +44,9 @@
             <view class="standArea">
                 <view class="title">
                     <view class="icon">
-                        <image src="../../../static/stand.png" mode="aspectFit"></image>
+                        <image src="../../../static/fuck.png" mode="aspectFit"></image>
                     </view>
-                    <div class="titleText">长时停留</div>
+                    <div class="titleText">挥手</div>
                 </view>
                 <view class="text">
                     <span>总事件数：129</span>

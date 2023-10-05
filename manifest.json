@@ -5,6 +5,7 @@
     "versionName" : "1.0.0",
     "versionCode" : "100",
     "transformPx" : false,
+    
     /* 5+App特有相关 */
     "app-plus" : {
         "usingComponents" : true,
@@ -113,4 +114,5 @@
         "enable" : false
     },
     "vueVersion" : "2"
+    
 }
