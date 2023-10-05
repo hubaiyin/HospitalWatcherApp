@@ -25,6 +25,8 @@
       <view class="video">
         <video
           :src="warnData.video"
+          :is-live="true"
+          :autoplay="true"
           style="
             height: 100%;
             width: 100%;
@@ -101,11 +103,7 @@
         <view class="options">
           <view class="uni-list">
             <checkbox-group @change="checkboxChange">
-              <view
-                class="borderBox"
-                v-for="item in ability"
-                :key="item.value"
-              >
+              <view class="borderBox" v-for="item in ability" :key="item.value">
                 <label class="uni-list-cell uni-list-cell-pd checkbox">
                   <view>
                     <checkbox :value="item.value" :checked="item.checked" />
@@ -140,9 +138,14 @@ export default {
     warnData: {
       type: Object,
     },
+    monitorData: {
+      type: Object,
+    },
   },
   mounted() {
-    console.log(this.warnData);
+    console.log(this.warnData, this.monitorData);
+    console.log(this.border);
+    if (this.border[0].leftX === null) this.border = [];
   },
   data() {
     return {
@@ -159,6 +162,9 @@ export default {
     };
   },
   methods: {
+    async getImg() {
+      await uni.$http.get(`/api/v1/monitor/image/${this.warnData.id}`);
+    },
     start(e) {
       if (this.locked) return;
       let x = e.touches[0].x;
@@ -167,7 +173,7 @@ export default {
 				let y = e.touches[0].x; */
       this.startPoint.x = x;
       this.startPoint.y = y;
-      console.log(this.startPoint);
+      // console.log(this.startPoint);
       this.painting = true;
       this.borData = {
         maxX: x,
@@ -178,7 +184,7 @@ export default {
     },
     move(e) {
       if (this.locked) return;
-      console.log("e", e.touches[0]);
+      // console.log("e", e.touches[0]);
       let x = e.touches[0].x;
       let y = e.touches[0].y;
       let newPoint = { x: x, y: y };
@@ -200,7 +206,7 @@ export default {
         },
       ];
       this.borData = {};
-      console.log("end");
+      console.log("end", this.border);
     },
     push(newPoint) {
       this.borData.maxX = Math.max(newPoint.x, this.borData.maxX);
@@ -215,28 +221,33 @@ export default {
       console.log("bye");
       this.ability = [
         {
+          name: "进入危险区域",
           value: 1,
-          name: "进入危险区",
           checked: false,
         },
         {
+          name: "挥手",
           value: 2,
-          name: "烟雾",
           checked: false,
         },
         {
-          value: 3,
           name: "摔倒",
+          value: 3,
           checked: false,
         },
         {
-          value: 4,
           name: "明火",
+          value: 4,
           checked: false,
         },
         {
-          value: 5,
           name: "吸烟",
+          value: 5,
+          checked: false,
+        },
+        {
+          name: "打拳",
+          value: 6,
           checked: false,
         },
       ];
@@ -245,18 +256,54 @@ export default {
       console.log("hi");
       this.border = [];
     },
-    checkChange() {
+    async checkChange() {
+      console.log(this.border);
       uni.showModal({
         title: "警告",
         content: "确定修改?",
         showCancel: true,
-        success: () => {
-          const data = {
-            id: this.warnData.id,
-            border: this.border,
-            ability: this.ability,
-          };
-          this.$emit("change", data);
+        success: async () => {
+          let data = {};
+          if (this.border.length === 0) {
+            console.log("empty");
+            data = {
+              id: this.warnData.id,
+              name: this.warnData.name,
+              area: this.warnData.department,
+              leader: this.warnData.leader,
+              ip: this.warnData.video,
+              longitude: this.monitorData.longitude,
+              latitude: this.monitorData.latitude,
+              dangerArea: this.ability[0].checked,
+              fall: this.ability[2].checked,
+              flame: this.ability[3].checked,
+              smoke: this.ability[4].checked,
+              wave: this.ability[1].checked,
+              punch: this.ability[5].checked,
+            };
+          } else {
+            data = {
+              id: this.warnData.id,
+              name: this.warnData.name,
+              area: this.warnData.department,
+              leader: this.warnData.leader,
+              ip: this.warnData.video,
+              longitude: this.monitorData.longitude,
+              latitude: this.monitorData.latitude,
+              dangerArea: this.ability[0].checked,
+              fall: this.ability[2].checked,
+              flame: this.ability[3].checked,
+              smoke: this.ability[4].checked,
+              wave: this.ability[1].checked,
+              punch: this.ability[5].checked,
+              leftX: Math.floor(this.border[0].leftX),
+              leftY: Math.floor(this.border[0].leftY),
+              rightX: Math.floor(this.border[0].rightX),
+              rightY: Math.floor(this.border[0].rightY),
+            };
+          }
+          await uni.$http.post("/api/v1/monitor/update", data);
+          this.$emit("change");
         },
       });
     },

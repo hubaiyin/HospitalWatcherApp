@@ -40,20 +40,35 @@
         :show-location="isShow"
         id="map1"
         :markers="markers"
+        @tap="showDetail = false"
+        @markertap="showMarker"
       >
         <cover-view class="status" @tap="test">
           <cover-view
-            style="
-              height: 44rpx;
-              margin-left: 20%;
-              margin-top: 3%;
-              font-weight: bold;
-            "
+            style="height: 40px; line-height: 40px; margin-bottom: 5px"
           >
             摄像头总数：{{ total }}
           </cover-view>
-          <cover-view style="height: 44rpx; margin-left: 20%; margin-top: 3%">
+          <cover-view style="height: 40px; line-height: 40px">
             正在工作的设备：{{ working }}
+          </cover-view>
+        </cover-view>
+        <cover-view class="detail" v-if="showDetail">
+          <cover-view class="left">
+            {{ markersDetail[index].name }}
+          </cover-view>
+          <cover-view class="right">
+            <cover-view style="line-height: 20px"
+              >监测到危险情况数量：{{
+                markersDetail[index].alarmCnt
+              }}</cover-view
+            >
+            <cover-view style="line-height: 20px"
+              >监测区域：{{ markersDetail[index].area }}</cover-view
+            >
+            <cover-view style="line-height: 20px"
+              >负责人：{{ markersDetail[index].leader }}</cover-view
+            >
           </cover-view>
         </cover-view>
       </map>
@@ -112,6 +127,7 @@
       :showEdit="showEdit"
       @change="changeShow"
       :warnData="warnData[index]"
+      :monitorData="markersDetail[index]"
       v-if="showEdit"
     ></Edit>
   </view>
@@ -125,116 +141,20 @@ export default {
     return {
       showEdit: false,
       safeHeight: 0,
-      total: 20,
-      working: 19,
+      total: 0,
+      working: 0,
       longitude: 0,
       latitude: 0,
       isShow: false,
+      showDetail: false,
+      index: 0,
       showDelete: false,
       choosen: 2,
       scrollHeight: 0,
       index: 0,
-      markers: [
-        {
-          id: 1221,
-          latitude: 45,
-          longitude: 125,
-          iconPath: "../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png",
-          width: 32,
-          height: 32,
-          title: "智慧摄像头-1",
-        },
-      ],
-      warnData: [
-        {
-          id: "10086",
-          name: "智能摄像头-1",
-          deal: "正在运行",
-          number: "A104",
-          department: "急诊科走廊",
-          leader: "沛沛",
-          running: true,
-          border: [],
-          video: "",
-          img: "",
-          ability: [
-            // value根据你那边caseType决定
-            {
-              value: 1,
-              name: "进入危险区",
-              checked: true,
-            },
-            {
-              value: 2,
-              name: "烟雾",
-              checked: false,
-            },
-            {
-              value: 3,
-              name: "摔倒",
-              checked: false,
-            },
-            {
-              value: 4,
-              name: "明火",
-              checked: false,
-            },
-            {
-              value: 5,
-              name: "吸烟",
-              checked: true,
-            },
-          ],
-        },
-        {
-          name: "智能摄像头-4",
-          deal: "正在运行",
-          number: "A103",
-          department: "精神科",
-          leader: "轩轩",
-          running: true,
-          border: [
-            {
-              // 左上角
-              leftY: 12,
-              leftX: 33,
-              // 右下角
-              rightY: 140,
-              rightX: 161,
-            },
-          ],
-          video: "",
-          img: "", //视频中任意一张即可，用来对应场景的
-          ability: [
-            // value根据你那边caseType决定
-            {
-              value: 1,
-              name: "进入危险区",
-              checked: false,
-            },
-            {
-              value: 2,
-              name: "烟雾",
-              checked: true,
-            },
-            {
-              value: 3,
-              name: "摔倒",
-              checked: false,
-            },
-            {
-              value: 4,
-              name: "明火",
-              checked: true,
-            },
-            {
-              value: 5,
-              name: "吸烟",
-              checked: false,
-            },
-          ], //该摄像头要发挥的功能
-        },
-      ],
+      markers: [],
+      warnData: [],
+      markersDetail: [],
       dealIcon: [
         "../../../static/20230910-194834.png",
         "../../../static/20230910-194949.png",
@@ -242,8 +162,9 @@ export default {
     };
   },
   methods: {
-    changeShow(data) {
-      console.log("被触发了", data);
+    async changeShow() {
+      console.log("被触发了");
+      await this.getMonitor();
       this.showEdit = false;
     },
     jump() {
@@ -259,6 +180,42 @@ export default {
     edit(index) {
       this.index = index;
       this.showEdit = true;
+    },
+    async getMonitor() {
+      await uni.$http.get("/api/v1/monitor").then(({ data }) => {
+        this.warnData = data.data;
+      });
+    },
+    async getMap() {
+      await uni.$http.get("/api/v1/monitor/map").then(({ data }) => {
+        const datas = data.data;
+        console.log(datas);
+        this.total = datas.total;
+        this.working = datas.running;
+        this.markersDetail = datas.monitorPosList;
+        const markers = [];
+        datas.monitorPosList.map((item) => {
+          markers.push({
+            id: item.id,
+            latitude: item.latitude,
+            longitude: item.longitude,
+            iconPath:
+              "../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png",
+            width: 32,
+            height: 32,
+            title: item.name,
+          });
+        });
+        this.markers = markers;
+      });
+    },
+    showMarker(e) {
+      const id = e.detail.markerId;
+      console.log(id);
+      this.index = this.markersDetail.findIndex((item) => {
+        return item.id === id;
+      });
+      this.showDetail = true;
     },
   },
   onLoad() {
@@ -301,6 +258,8 @@ export default {
         .exec();
       console.log("hi");
     });
+    this.getMonitor();
+    this.getMap();
   },
 };
 </script>
@@ -384,7 +343,6 @@ export default {
   }
   .status {
     width: 80%;
-    height: 180rpx;
     position: absolute;
     top: 2%;
     left: 50%;
@@ -394,9 +352,43 @@ export default {
     border-radius: 20rpx;
     color: #606c97;
     display: flex;
-    flex-direction: column;
+    justify-content: space-around;
     box-sizing: border-box;
     // align-items: center;
+  }
+  .detail {
+    margin: 0;
+    padding: 0;
+    height: 82px;
+    width: 80%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: space-between;
+    border-radius: 8px;
+    position: absolute;
+    bottom: 2%;
+    left: 50%;
+    transform: translate(-50%);
+    color: #fff;
+    .left {
+      width: 48%;
+      font-size: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      color: #fff;
+      text-align: center;
+    }
+    .right {
+      width: 50%;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-around;
+      color: #fff;
+    }
   }
   .content {
     padding: 0 16rpx;
