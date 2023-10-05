@@ -21,7 +21,8 @@
         "modules" : {
             "Maps" : {},
             "Geolocation" : {},
-            "Push" : {}
+            "Push" : {},
+            "VideoPlayer" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -51,7 +52,9 @@
                 ]
             },
             /* ios打包配置 */
-            "ios" : {},
+            "ios" : {
+                "dSYMs" : false
+            },
             /* SDK配置 */
             "sdkConfigs" : {
                 "maps" : {
@@ -80,7 +83,8 @@
                         "mi" : {},
                         "meizu" : {}
                     }
-                }
+                },
+                "ad" : {}
             },
             "splashscreen" : {
                 "androidStyle" : "default",

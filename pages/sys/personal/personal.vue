@@ -21,7 +21,7 @@
 							Awayer
 						</view>
 						<view class="phone">
-							168****4809
+							{{phone}}
 						</view>
 					</view>
 				</view>
@@ -63,10 +63,12 @@
 		data() {
 			return {
 				safeHeight:0,
+				phone:null
 			};
 		},
 		onLoad(){
 			this.safeHeight = uni.getWindowInfo().safeArea.height;
+			this.phone = uni.getStorageSync('phone')
 		},
 		methods:{
 			jump(url){

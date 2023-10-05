@@ -53,17 +53,6 @@
 							<image src="../../../../static/edit-none.png" mode="aspectFit"></image>
 						</view>
 					</view>
-					<view class="items">
-						<view class="left">
-							<view class="text">
-								性别
-							</view>
-							<input v-model="sex" :disabled="true" type="safe-password" style="font-weight: bold; width: 50%;">
-						</view>
-							<view class="img" @tap="showSex = true">
-								<image src="../../../../static/edit-none.png" mode="aspectFit"></image>
-							</view>
-					</view>
 					<view class="button">
 						确认
 					</view>
@@ -71,7 +60,7 @@
 			</view>
 		</view>
 		<u-modal :show="showAlert" title="请联系管理员进行修改" content="为了安全性考虑,若对您造成不便我们深感抱歉" @confirm="showAlert=false"></u-modal>
-		<u-modal :show="showChangePassword" title="修改密码" @confirm="showChangePassword=false" :showCancelButton="true" @cancel="showChangePassword=false">
+		<u-modal :show="showChangePassword" title="修改密码" @confirm="editPassword" :showCancelButton="true" @cancel="passwordCancel">
 			<view class="">
 				<view class="change">
 					<view class="text">
@@ -87,7 +76,6 @@
 				</view>
 			</view>
 		</u-modal>
-		<u-picker :show="showSex" :columns="columns" @confirm="showSex = false" @cancel="showSex=false"></u-picker>
 	</view>
 </template>
 
@@ -97,13 +85,10 @@
 			return {
 				safeHeight:0,
 				phoneNumber:'18108074809',
-				sex:'男',
 				password:'114514',
 				userName:'Awayer',
 				showAlert:false,
 				showChangePassword:false,
-				showSex:false,
-				columns:[['男','女']],
 				oldPassword:'',
 				newPassword:'',
 				focus:false
@@ -111,21 +96,59 @@
 		},
 		onLoad(){
 			this.safeHeight = uni.getWindowInfo().safeArea.height;
+			this.phoneNumber = uni.getStorageSync('phone')
 		},
 		methods:{
 			back(){
 				uni.navigateBack();
 			},
 			showInput(){
-			        this.focus = true;
-			        // 获取软键盘的高度
-			        uni.onKeyboardHeightChange(res => {
-			          console.log(res.height);
-			          if(res.height === 0){
-			              this.focus = false;
-			          }
-			        })
-			      },
+			  this.focus = true;
+			  // 获取软键盘的高度
+			  uni.onKeyboardHeightChange(res => {
+			    console.log(res.height);
+			    if(res.height === 0){
+			        this.focus = false;
+			    }
+			  })
+			},
+			editPassword(){
+				const data = {
+					oldPassword:this.oldPassword,
+					newPassword:this.newPassword
+				}
+				uni.showModal({
+					title: "警告",
+					content: "确定修改?",
+					showCancel: true,
+					success: async () => {
+						await uni.$http.post('/api/v1/user/update',data).then(({data})=>{
+							console.log(data);
+							if(data.code === 'A1000'){
+								uni.showToast({
+									title:data.message,
+									duration:2000,
+									icon:'error'
+								})
+							}
+							else if(data.code === '00000'){
+								uni.showToast({
+									title:data.message,
+									duration:2000,
+									complete: () => {
+										this.showChangePassword = false
+									}
+								})
+							}
+						})
+					}
+				})
+			},
+			passwordCancel(){
+				this.oldPassword = ''
+				this.newPassword = ''
+				this.showChangePassword = false
+			}
 		}
 	}
 </script>
