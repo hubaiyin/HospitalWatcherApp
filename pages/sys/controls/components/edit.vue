@@ -51,7 +51,7 @@
         <view class="edit">
           <span>编辑区</span>
           <image
-            src="../../../../static/fde8aa31-f3f3-41af-b0ec-d85398199844.png"
+            :src="img"
             mode="aspectFit"
             style="width: 40rpx; height: 40rpx"
             @tap="resetBorder"
@@ -159,11 +159,14 @@ export default {
       borData: {},
       painting: false,
       ability: JSON.parse(JSON.stringify(this.warnData.ability)),
+	  img:'',
     };
   },
   methods: {
     async getImg() {
-      await uni.$http.get(`/api/v1/monitor/image/${this.warnData.id}`);
+      await uni.$http.get(`/api/v1/monitor/image/${this.warnData.id}`).then(({res})=>{
+		  this.img = ('data:image/png;base64,'+res.data).replace(/[\r\n]/g,'');
+	  });
     },
     start(e) {
       if (this.locked) return;
@@ -215,7 +218,7 @@ export default {
       this.borData.minY = Math.min(newPoint.y, this.borData.minY);
     },
     changeShow() {
-      this.$emit("change");
+      this.$emit("change",false);
     },
     reset() {
       console.log("bye");
@@ -302,8 +305,10 @@ export default {
               rightY: Math.floor(this.border[0].rightY),
             };
           }
-          await uni.$http.post("/api/v1/monitor/update", data);
-          this.$emit("change");
+          await uni.$http.post("/api/v1/monitor/update", data).then(({data})=>{
+			  console.log('edit',data);
+			  this.$emit("change",true);
+		  })
         },
       });
     },

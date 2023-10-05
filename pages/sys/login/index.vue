@@ -198,7 +198,7 @@ export default {
       }
 
       const data = {
-        username: this.username,
+        phone: this.username,
         password: this.password,
       };
       uni.$http.post("/api/v1/user/login", data).then(({ data }) => {
@@ -214,6 +214,7 @@ export default {
             icon: "none",
             success: () => {
               console.log("hi");
+			  uni.setStorageSync('phone',this.username)
               uni.setStorage({
                 key: "token",
                 data: data.data.token,
