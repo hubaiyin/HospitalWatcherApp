@@ -162,9 +162,9 @@ export default {
     };
   },
   methods: {
-    async changeShow() {
+    async changeShow(bool) {
       console.log("被触发了");
-      await this.getMonitor();
+	  if(bool) await this.getMonitor();
       this.showEdit = false;
     },
     jump() {
