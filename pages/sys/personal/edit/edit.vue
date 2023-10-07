@@ -84,9 +84,9 @@
 		data() {
 			return {
 				safeHeight:0,
-				phoneNumber:'18108074809',
+				phoneNumber:'',
 				password:'114514',
-				userName:'Awayer',
+				userName:'',
 				showAlert:false,
 				showChangePassword:false,
 				oldPassword:'',
@@ -97,6 +97,7 @@
 		onLoad(){
 			this.safeHeight = uni.getWindowInfo().safeArea.height;
 			this.phoneNumber = uni.getStorageSync('phone')
+			this.userName = uni.getStorageSync('username')
 		},
 		methods:{
 			back(){
