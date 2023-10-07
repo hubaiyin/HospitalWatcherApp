@@ -42,7 +42,7 @@ export default {
 	})
     if (uni.getStorageSync("token")) {
       setTimeout(() => {
-		  console.log('hi')
+		  // console.log('hi')
         uni.switchTab({
           url: "/pages/sys/dateWatcher/dateWatcher",
         });

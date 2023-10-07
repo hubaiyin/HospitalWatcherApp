@@ -215,6 +215,7 @@ export default {
             success: () => {
               console.log("hi");
 			  uni.setStorageSync('phone',this.username)
+			  uni.setStorageSync('username',data.data.name)
               uni.setStorage({
                 key: "token",
                 data: data.data.token,

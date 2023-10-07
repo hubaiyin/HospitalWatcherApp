@@ -102,7 +102,7 @@
         </view>
         <view class="options">
           <view class="uni-list">
-            <checkbox-group @change="checkboxChange">
+            <checkbox-group @change="checkboxChange" class="group">
               <view class="borderBox" v-for="item in ability" :key="item.value">
                 <label class="uni-list-cell uni-list-cell-pd checkbox">
                   <view>
@@ -376,7 +376,6 @@ export default {
       overflow: hidden;
       width: 328px;
       height: 246px;
-      background-color: pink;
       position: relative;
     }
     .edit {
@@ -392,20 +391,25 @@ export default {
     }
     .options {
       width: 100%;
+	  .group{
+		  display: flex;
+		  flex-wrap: wrap;
+		  // background-color: pink;
+		  padding: 0;
+		  width: 100%;
+		  justify-content: space-around;
+	  }
       .borderBox {
-        display: flex;
-        margin: 0 auto;
-        width: 90%;
-        align-items: center;
-        justify-content: center;
+        width: 45%;
         margin-top: 10px;
+		margin-left: -5px;
         .checkbox {
           display: flex;
           align-items: center;
           border: 1px solid grey;
           padding: 4px;
           padding-top: 2px;
-          width: 50%;
+          width: 100%;
           border-radius: 4px;
         }
         .time {

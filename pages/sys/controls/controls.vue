@@ -222,14 +222,26 @@ export default {
       });
       this.showDetail = true;
     },
-	async editWorking(index){
+	editWorking(index){
 		const id = this.warnData[index].id
-		await uni.$http.post(`/api/v1/monitor/switch/${id}`).then(({data})=>{
-			console.log(data)
-			if(data.code === '00000'){
-				this.warnData[index].running = !this.warnData[index].running
+		uni.showModal({
+			showCancel:true,
+			title:this.warnData[index].running?'是否关闭摄像头？':'是否启用摄像头？',
+			success: async () => {
+				await uni.$http.post(`/api/v1/monitor/switch/${id}`).then(({data})=>{
+					console.log(data)
+					if(data.code === '00000'){
+						this.warnData[index].running = !this.warnData[index].running
+						if(this.warnData[index].running){
+							this.warnData[index].deal = '正在运行'
+						}else{
+							this.warnData[index].deal = '停止'
+						}
+					}
+				})
 			}
 		})
+		// this.warnData[index].running = !this.warnData[index].running
 	}
   },
   onLoad() {
