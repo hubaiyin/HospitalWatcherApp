@@ -78,7 +78,6 @@ class websocketUtil {
 	getMessage(callback) {
 		this.socketTask.onMessage((res) => {
 			return callback(res)
-            // console.log(res.data);
 		})
 	}
  

@@ -20,7 +20,7 @@
 				<view class="chat">
 					<view id="msgbar" v-for="(item, index) in textList" :key="index" :class="index%2 === 1 ? 'left' : 'right'">
 						<view class="avatar">
-							<image src="../../../static/avatar.jpg"></image>
+							<image :src="index % 2 === 0 ? '../../../static/AIuser.png' : '../../../static/ai.png' "></image>
 						</view>
 						<view class="msg">
 							<view>{{ item }}</view>
@@ -44,7 +44,7 @@
 			<view class="down" id="down">
 				<view class="input">
 					<input type="text" v-model="text">
-					<button @click="send()">
+					<button @click="send()" :disabled="isDisabled">
 						<span>发 送</span>
 					</button>
 				</view>
@@ -58,6 +58,7 @@ import wsRequest from '../../../api/websocket.js'
 	export default {
 		data() {
 			return {
+				isDisabled:false,
 				safeHeight:0,
 				text: "",
 				answerText: "",
@@ -85,8 +86,13 @@ import wsRequest from '../../../api/websocket.js'
 				this.websocket.getMessage(res => {
 					this.cnt ++;
 					this.isLoading = false;
-					this.answerText += res.data;
+					if(res.data !== "[DONE]"){
+						this.answerText += res.data;
+					}
 					Vue.set(this.textList , this.textList.length-1 , this.answerText)
+					if(res.data === "[DONE]") {
+						this.isDisabled = false;
+					}
 					if (this.cnt == 12) {
 						this.toBottom();
 						this.cnt = 0;
@@ -121,6 +127,7 @@ import wsRequest from '../../../api/websocket.js'
 					this.count ++;
 					this.getAnswer(this.text);
 					this.text = "";
+					this.isDisabled = true;
 					this.isLoading = true;
 				}	
 			},
@@ -289,6 +296,8 @@ import wsRequest from '../../../api/websocket.js'
 							.avatar {
 								width: 100rpx;
 								height: 100rpx;
+								background-color: #fff;
+								border-radius: 50%;
 								image {
 									width: 100%;
 									height: 100%;
@@ -325,6 +334,8 @@ import wsRequest from '../../../api/websocket.js'
 							.avatar {
 								width: 100rpx;
 								height: 100rpx;
+								background-color: #fff;
+								border-radius: 50%;
 								image {
 									width: 100%;
 									height: 100%;
