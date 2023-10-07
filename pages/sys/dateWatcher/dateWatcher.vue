@@ -24,8 +24,8 @@
 					></image>
 				</view>
 			</view>
-			<real-time v-show="!(choosen-1)"></real-time>
-			<history-data v-show="(choosen-1)"></history-data>
+			<real-time v-if="!(choosen-1)"></real-time>
+			<history-data v-if="(choosen-1)"></history-data>
 		</view>
 	</view>
 </template>

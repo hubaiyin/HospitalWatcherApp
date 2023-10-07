@@ -1,4 +1,5 @@
 <script>
+	import fs from 'fs'
 export default {
   onLaunch: function () {
     console.log("App Launch");

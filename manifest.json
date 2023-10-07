@@ -59,17 +59,17 @@
                 "maps" : {
                     "amap" : {
                         "appkey_ios" : "f98828a01420a573694ae60416417be7",
-                        "appkey_android" : "ed81bf04550b8ca8ed4e223365e6e5a0"
+                        "appkey_android" : "aa5e21ba72edab3e597a51ee3b8d7b30"
                     }
                 },
                 "geolocation" : {
                     "system" : {
-                        "__platform__" : [ "ios", "android" ]
+                        "__platform__" : [ "android" ]
                     },
                     "amap" : {
-                        "__platform__" : [ "ios", "android" ],
+                        "__platform__" : [ "android" ],
                         "appkey_ios" : "f98828a01420a573694ae60416417be7",
-                        "appkey_android" : "ed81bf04550b8ca8ed4e223365e6e5a0"
+                        "appkey_android" : "aa5e21ba72edab3e597a51ee3b8d7b30"
                     }
                 },
                 "push" : {
