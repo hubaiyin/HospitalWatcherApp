@@ -1,4 +1,5 @@
 <script>
+	import fs from 'fs'
 export default {
   onLaunch: function () {
     console.log("App Launch");
@@ -41,7 +42,7 @@ export default {
 	})
     if (uni.getStorageSync("token")) {
       setTimeout(() => {
-		  console.log('hi')
+		  // console.log('hi')
         uni.switchTab({
           url: "/pages/sys/dateWatcher/dateWatcher",
         });
