@@ -214,7 +214,7 @@ export default {
             icon: "none",
             success: () => {
               console.log("hi");
-			  uni.setStorageSync('phone',this.username)
+			        uni.setStorageSync('phone',this.username)
               uni.setStorage({
                 key: "token",
                 data: data.data.token,

@@ -4,16 +4,19 @@
     "version" : "0.0",
     "configurations" : [
         {
-            "app-plus" : {
-                "launchtype" : "remote"
-            },
-            "default" : {
-                "launchtype" : "local"
-            },
-            "mp-weixin" : {
-                "launchtype" : "local"
-            },
-            "type" : "uniCloud"
+        	"app-plus" : 
+        	{
+        		"launchtype" : "remote"
+        	},
+        	"default" : 
+        	{
+        		"launchtype" : "local"
+        	},
+        	"mp-weixin" : 
+        	{
+        		"launchtype" : "local"
+        	},
+        	"type" : "uniCloud"
         },
         {
             "playground" : "custom",
