@@ -51,9 +51,12 @@ export default {
       }
     };
   },
-    mounted() {
-    this.getServerData(1);
-  },
+  mounted() {
+      this.getServerData(1);
+    },
+    onShow(){
+      this.getServerData(1);
+    },
   methods: {
     async getData(range) {
         let data = {

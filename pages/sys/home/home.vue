@@ -18,12 +18,25 @@
 			</view>
 			<scroll-view :scroll-top="scrollTop" class="scroll" scroll-y @scroll="recordHeight" :style="{ height: scrollHeight + 'px' , }">
 				<view class="chat">
-					<view id="msgbar" v-for="(item, index) in textList" :key="index" :class="isLeft === 1 ? 'left' : 'right'">
+					<view id="msgbar" v-for="(item, index) in textList" :key="index" :class="index%2 === 1 ? 'left' : 'right'">
 						<view class="avatar">
 							<image src="../../../static/avatar.jpg"></image>
 						</view>
 						<view class="msg">
 							<view>{{ item }}</view>
+						</view>
+					</view>
+					<view class="loading" v-show="isLoading">
+						<view class="loadText">
+							<span>智能生成中...</span>
+						</view>
+						<view class="spinner">
+							<view></view>
+							<view></view>
+							<view></view>
+							<view></view>
+							<view></view>
+							<view></view>
 						</view>
 					</view>
 				</view>
@@ -41,31 +54,56 @@
 </template>
 
 <script>
+import wsRequest from '../../../api/websocket.js'
 	export default {
 		data() {
 			return {
 				safeHeight:0,
-				isLeft:0,
-				text:"",
+				text: "",
+				answerText: "",
 				textList:[],
 				scrollTop:0,
 				newTop:0,
 				scrollHeight:0,
 				count:0,
+				websocket: null,
+				cnt: 0,
+				isLoading: false,
 			}
 		},
-		onLoad() {
-			this.safeHeight = uni.getWindowInfo().safeArea.height;
-			console.log("安全高度：" + this.safeHeight);
-			this.$nextTick(()=>{
-				const query = uni.createSelectorQuery().in(this);
-				query.select('#down').boundingClientRect(data => {
-					console.log(data);
-					this.scrollHeight = (data.height / 0.1) * 0.8;	
-				}).exec();	
-			})
+		onShow() {
+			this.setSafeArea();
+			this.createWs();
+		},
+		beforeDestroy() {
+
 		},		
 		methods:{
+			createWs() {
+				let token = uni.getStorageSync('token')
+				this.websocket = new wsRequest(`ws://101.43.254.115:10115/api/v1/gpt/ws/${token}`,5000)
+				this.websocket.getMessage(res => {
+					this.cnt ++;
+					this.isLoading = false;
+					this.answerText += res.data;
+					Vue.set(this.textList , this.textList.length-1 , this.answerText)
+					if (this.cnt == 12) {
+						this.toBottom();
+						this.cnt = 0;
+					}
+				})
+			},
+			setSafeArea() {
+				this.safeHeight = uni.getWindowInfo().safeArea.height;
+				// console.log("安全高度：" + this.safeHeight);
+				this.$nextTick(()=>{
+					const query = uni.createSelectorQuery().in(this);
+					query.select('#down').boundingClientRect(data => {
+						// console.log(data);
+						this.scrollHeight = (data.height / 0.1) * 0.8;	
+					}).exec();	
+				})
+			},
 			send(){
 				if(this.text == ""){
 					uni.showToast({
@@ -75,33 +113,26 @@
 					})  
 				}
 				else {
-					console.log("输入的消息为：" + this.text);
+					// console.log("输入的消息为：" + this.text);
+					this.cnt = 0;
+					this.answerText = "";
 					this.textList.push(this.text);
 					this.toBottom();
 					this.count ++;
-					this.getAnswer();
-					this.text="";
+					this.getAnswer(this.text);
+					this.text = "";
+					this.isLoading = true;
 				}	
 			},
-			getAnswer(){
-				const data = {
-					id:1,
-					message: this.text
-				}
-				uni.$http.post("/api/v1/gpt" , data)
-				.then(res => {
-					console.log(res);
-					if(res.data.code != "00000") {
-						uni.showToast({
-							title: "发送失败，请稍后重试！",
-							duration: 1500,
-							icon: "none"
-						})
-					}
-					else {
-						this.textList.push(res.data.data)
-					}
-				})
+			getAnswer(ask){
+				// this.isLeft = 1;
+				this.answerText = ""
+				this.textList.push(this.answerText);
+				this.toBottom();
+				this.count ++ ;
+				// 发送消息
+				let data = ask;
+				this.websocket.send(JSON.stringify(data));
 			},
 			recordHeight(e) {
 				this.newTop = e.detail.scrollTop;
@@ -112,10 +143,10 @@
 					this.query
 					.selectAll("#msgbar")
 					.boundingClientRect((data) => {
-						console.log(data);
+						// console.log(data);
 						const elements = Array.from(data);
-						console.log("elements");
-						console.log(elements);
+						// console.log("elements");
+						// console.log(elements);
 						if (!elements.length) return;
 						let index = elements.length - 1;
 						this.scrollTop = elements[index].bottom - elements[0].bottom;
@@ -128,7 +159,7 @@
 		watch:{
 			count: {
 				handler() {
-					console.log("@count_handler");
+					// console.log("@count_handler");
 					this.scrollTop = this.newTop;
 				},
 			},
@@ -205,7 +236,7 @@
 				position: absolute;
 				bottom: 0;
 				width: 100%;
-				height: 91%;
+				height: 93%;
 				background-color: #E9EEFF;
 				border-radius: 50rpx 50rpx 0 0rpx;
 				display: flex;
@@ -247,12 +278,13 @@
 						justify-content: flex-start;
 						///////LEFT//////
 						.left {
-							margin-top: 15rpx;
-							max-width: 70%;
+							
+							width: 95%;
 							// height: 10%;
+							// border: 2px solid green;
 							margin-bottom: 15rpx;
-							border: 2px solid green;
 							display: flex;
+							flex-direction: row;
 							align-items: flex-start;
 							.avatar {
 								width: 100rpx;
@@ -264,7 +296,9 @@
 								}
 							}
 							.msg {
-								width: 70%;
+								// width: 70%;
+								margin-top: 15rpx;
+								max-width: 70%;
 								// height: 80%;
 								background-color: white;
 								margin-left: 20rpx;
@@ -359,5 +393,72 @@
 			}
 		// }
 	}
+	.loading {
+		// border: 2px solid red;
+		position: fixed;
+		bottom: 12%;
+		// width: 50%;
+		display: flex;
+		flex-direction: row-reverse;
+		.loadText {
+			margin-left: 25rpx;
+		}
+		.spinner {
+				width: 40rpx;
+				height: 40rpx;
+				animation: spinner-y0fdc1 2s infinite ease;
+				transform-style: preserve-3d;
+			}
 
+			.spinner > view {
+				background-color: rgba(0,77,255,0.2);
+				height: 100%;
+				position: absolute;
+				width: 100%;
+				border: 2px solid #004dff;
+			}
+
+			.spinner view:nth-of-type(1) {
+			transform: translateZ(-21.5rpx) rotateY(180deg);
+			}
+
+			.spinner view:nth-of-type(2) {
+			transform: rotateY(-270deg) translateX(50%);
+			transform-origin: top right;
+			}
+
+			.spinner view:nth-of-type(3) {
+			transform: rotateY(270deg) translateX(-50%);
+			transform-origin: center left;
+			}
+
+			.spinner view:nth-of-type(4) {
+			transform: rotateX(90deg) translateY(-50%);
+			transform-origin: top center;
+			}
+
+			.spinner view:nth-of-type(5) {
+			transform: rotateX(-90deg) translateY(50%);
+			transform-origin: bottom center;
+			}
+
+			.spinner view:nth-of-type(6) {
+			transform: translateZ(21.5rpx);
+			}
+
+			@keyframes spinner-y0fdc1 {
+			0% {
+			transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
+			}
+
+			50% {
+			transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
+			}
+
+			100% {
+			transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
+			}
+			}
+
+	}
 </style>

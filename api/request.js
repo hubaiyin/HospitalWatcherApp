@@ -12,6 +12,7 @@ uni.$http = $http;
 $http.baseUrl = "http://101.43.254.115:10115";
 $http.beforeRequest = function (options) {
     let token = uni.getStorageSync('token')
+    // console.log("token!!!!1",token);
     let header = {};
     if (token) {
         header = {
