@@ -55,7 +55,12 @@
         </cover-view>
         <cover-view class="detail" v-if="showDetail">
           <cover-view class="left">
-            {{ markersDetail[index].name }}
+            <cover-view class="title">
+              {{ markersDetail[index].name }}
+            </cover-view>
+            <cover-view class="icon">
+              <cover-image src="../../../static/monitor.png" alt=""></cover-image>
+            </cover-view>
           </cover-view>
           <cover-view class="right">
             <cover-view style="line-height: 20px"
@@ -200,9 +205,9 @@ export default {
             latitude: item.latitude,
             longitude: item.longitude,
             iconPath:
-              "../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png",
-            width: 32,
-            height: 32,
+              "../../../static/locate.png",
+            width: 35,
+            height: 35,
             title: item.name,
           });
         });
@@ -371,14 +376,32 @@ export default {
     transform: translate(-50%);
     color: #fff;
     .left {
-      width: 48%;
-      font-size: 18px;
+      // width: 45%;
+      // border: 2px solid blue;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      color: #fff;
-      text-align: center;
+      justify-content: space-around;
+      align-items: flex-start;
+      box-sizing: border-box;
+      padding-left: 20rpx;
+      .title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        // border: 2px solid red;
+        font-size: 1.1rem;
+        color: #fff;
+        font-weight: 700;
+      }
+      .icon {
+        width: 100rpx;
+        height: 100rpx;
+        // border: 2px solid red;
+        cover-image {
+          width: 100%;
+          height: 100%;
+        }
+      }
     }
     .right {
       width: 50%;

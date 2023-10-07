@@ -150,6 +150,9 @@
 		mounted() {
             this.getInfo();
 		},
+        onShow() {
+            this.getInfo();
+        }
 	}
 </script>
 
