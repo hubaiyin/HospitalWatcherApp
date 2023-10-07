@@ -24,7 +24,7 @@
       </view>
       <view class="video">
         <video
-          src="http://101.43.254.115:1975/flv?port=1985&app=live&stream=test1"
+          :src="warnData.video"
           :is-live="true"
           :autoplay="true"
           style="
