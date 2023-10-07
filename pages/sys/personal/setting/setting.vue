@@ -78,7 +78,7 @@ export default {
       showAbout: false,
       showClear: false,
       title: "关于",
-      content: "uView的目标是成为uni-app生态最优秀的UI框架",
+      content: "本项目旨在开发一个智能视频监控系统,能够对医院重点区域进行实时监控,使用计算机视觉技术智能分析监控画面,实现对病人跌倒、抽烟等危险情况的预警。一旦检测到危险情况,能够通过 App 推送和网页弹窗等方式向医务人员发出预警,以便采取及时干预措施,防止事态进一步恶化,保障医院安全。",
       timer: null,
     };
   },
@@ -100,12 +100,17 @@ export default {
       });
     },
     clear() {
-      if (!this.timer) {
-        this.timer = setTimeout(() => {
-          this.showClear = true;
-          this.timer = null;
-        }, 3000);
-      }
+      uni.showLoading({
+      	title:'清理中',
+      })
+	  setTimeout(()=>{
+		  uni.hideLoading();
+		  uni.showToast({
+		  	icon:'success',
+			duration:1000,
+			title:'清理完成'
+		  })
+	  },2000)
     },
   },
 };

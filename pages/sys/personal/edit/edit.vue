@@ -53,7 +53,7 @@
 							<image src="../../../../static/edit-none.png" mode="aspectFit"></image>
 						</view>
 					</view>
-					<view class="button">
+					<view class="button" @click="finish">
 						确认
 					</view>
 				</view>
@@ -91,7 +91,8 @@
 				showChangePassword:false,
 				oldPassword:'',
 				newPassword:'',
-				focus:false
+				focus:false,
+				isEditing:false,
 			};
 		},
 		onLoad(){
@@ -101,7 +102,49 @@
 		},
 		methods:{
 			back(){
-				uni.navigateBack();
+				if(this.isEditing){
+					uni.showModal({
+						showCancel:true,
+						title:'是否放弃修改用户名？',
+						success: () => {
+							uni.navigateBack();
+						}
+					})
+				}else{
+					uni.navigateBack();
+				}
+			},
+			finish(){
+				uni.showModal({
+					title:'是否保存该用户名？',
+					showCancel:true,
+					success: () => {
+						const data = {
+							name:this.userName
+						}
+						uni.$http.get(`/api/v1/user/update/name/${data}`).then(({data})=>{
+							console.log(data);
+							if(data.code === '00000'){
+								uni.showToast({
+									title:'修改成功',
+									duration:1500,
+									success: () => {
+										uni.setStorage({
+											key:'username',
+											data:this.userName
+										})
+									}
+								})
+							}else{
+								uni.showToast({
+									icon:'error',
+									duration:1500,
+									title:'修改失败'
+								})
+							}
+						})
+					}
+				})
 			},
 			showInput(){
 			  this.focus = true;
@@ -149,6 +192,16 @@
 				this.oldPassword = ''
 				this.newPassword = ''
 				this.showChangePassword = false
+			}
+		},
+		watch:{
+			userName:{
+				handler(newVal,oldVal){
+					console.log(oldVal)
+					if(oldVal === ''){
+						this.isEditing = true;
+					}
+				}
 			}
 		}
 	}

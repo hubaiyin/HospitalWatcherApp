@@ -104,7 +104,7 @@
           @touchend="stopMove($event, item)"
           :style="{ transform: 'translateX(' + item.moveX + 'px)' }"
         >
-          <view class="details">
+          <view class="details" :class="item.moveX===0?'bor':''">
             <view class="deviceName">
               {{ item.name }}
             </view>
@@ -127,7 +127,7 @@
             <view
               class="buttons"
               v-show="item.deal === '未处理'"
-              @click="alert"
+              @click="alert(index)"
             >
               <image src="../../../static/alert.png" mode="aspectFit"></image>
             </view>
@@ -155,12 +155,18 @@
                 mode="aspectFit"
               ></image>
             </view>
-            <view class="delete" @tap="deleteItem(index)">
+            <view class="delete" @tap="deleteItem(index)" v-show="!choosen">
               删除<image
                 src="../../../static/white-rubbish.png"
                 mode="aspectFit"
               ></image>
             </view>
+			<view class="finish" @tap="deleteItem(index)" v-show="choosen">
+			  完成<image
+			    src="../../../static/finish.png"
+			    mode="aspectFit"
+			  ></image>
+			</view>
           </view>
         </view>
         <u-loadmore :status="statusList"></u-loadmore>
@@ -220,7 +226,7 @@ export default {
       status: [["1级", "2级", "3级"]],
       statusValue: [1, 2, 3],
       statusIndex: null,
-      filters: [["进入危险区域", "烟雾", "摔倒", "明火", "吸烟"]],
+      filters: [["进入危险区域", "挥手", "摔倒", "明火", "吸烟"]],
       filterValue: [1, 2, 3, 4, 5],
       filterIndex: null,
       scrollHeight: 0,
@@ -278,12 +284,10 @@ export default {
     this.getRealList();
   },
   methods: {
-    alert() {
-      uni.showToast({
-        title: "已向相关部门发送通知",
-        duration: 2000,
-        icon: "none",
-      });
+    alert(index) {
+      uni.makePhoneCall({
+      	phoneNumber:this.warnData[index].phone
+      })
     },
     setFilter(e) {
       this.caseType = this.filterValue[e.indexs[0]];
@@ -682,6 +686,11 @@ export default {
       height: 300rpx;
       margin-bottom: 20rpx;
       position: relative;
+	  border-radius: 15rpx;
+	  // overflow: auto;
+	  .bor{
+		  border-radius: 15rpx!important;
+	  }
       .details {
         width: 100%;
         height: 300rpx;
@@ -797,6 +806,7 @@ export default {
         flex-direction: column;
         .edit,
         .deal,
+		.finish,
         .delete {
           flex: 1;
           width: 100%;
@@ -814,6 +824,9 @@ export default {
         .deal {
           background-color: #ffbc5d;
         }
+		.finish {
+		  background-color: #06BFA1;
+		}
         .delete {
           background-color: #ff5d5d;
           image {

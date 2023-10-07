@@ -4,12 +4,12 @@
 		  src="../../../static/startBack.png"
 		  mode="aspectFit"
 		></image>
-		<view class="text">
+		<!-- <view class="text">
 			医患智警
 		</view>
 		<view class="mainTitle">
 			基于YOLOv8的医院危险事件智能警报系统
-		</view>
+		</view> -->
 	</view>
 </template>
 

@@ -36,6 +36,7 @@ class Request {
 		// 清空header对象
 		this.header = {};
 		this.beforeRequest && typeof this.beforeRequest === 'function' && this.beforeRequest(this);
+		console.log(this.url)
 		return new Promise((resolve, reject) => {
 			uni.request({
 				url: this.url,
