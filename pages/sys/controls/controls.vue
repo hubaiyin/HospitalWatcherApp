@@ -154,7 +154,7 @@ export default {
       showDetail: false,
       index: 0,
       showDelete: false,
-      choosen: 2,
+      choosen: 1,
       scrollHeight: 0,
       index: 0,
       markers: [],

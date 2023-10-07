@@ -18,7 +18,7 @@
 					</view>
 					<view class="user">
 						<view class="name">
-							Awayer
+							{{username}}
 						</view>
 						<view class="phone">
 							{{phone}}
@@ -63,12 +63,15 @@
 		data() {
 			return {
 				safeHeight:0,
-				phone:null
+				phone:'',
+				username:''
 			};
 		},
-		onLoad(){
+		onShow(){
+			// console.log('show')
 			this.safeHeight = uni.getWindowInfo().safeArea.height;
-			this.phone = uni.getStorageSync('phone')
+			this.phone = uni.getStorageSync('phone').replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
+			this.username = uni.getStorageSync('username')
 		},
 		methods:{
 			jump(url){
