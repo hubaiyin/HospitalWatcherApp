@@ -49,9 +49,11 @@
 		methods: {
 			chooseOne() {
 				this.choosen = 1;
+				this.$forceUpdate();
 			},
 			chooseTwo() {
 				this.choosen = 2;
+				this.$forceUpdate();
 			}
 		}
 	}

@@ -75,6 +75,9 @@ import rowChart from '../../../components/rowChart.vue';
                 }
             },
         },
+        onShow(){
+            this.$forceUpdate();
+        }
 	}
 </script>
 

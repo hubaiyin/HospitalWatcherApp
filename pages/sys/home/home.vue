@@ -395,8 +395,8 @@ import wsRequest from '../../../api/websocket.js'
 	}
 	.loading {
 		// border: 2px solid red;
-		position: absolute;
-		bottom: 5%;
+		position: fixed;
+		bottom: 12%;
 		// width: 50%;
 		display: flex;
 		flex-direction: row-reverse;

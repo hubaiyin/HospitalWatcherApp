@@ -54,6 +54,9 @@
     mounted() {
       this.getServerData();
     },
+    onShow(){
+      this.getServerData();
+    },
     methods: {
       async getData() {
         await uni.$http.get("/api/v1/alarm/realtime")
@@ -91,7 +94,7 @@
         console.log(res);
         setTimeout(() => {
           this.chartData = JSON.parse(JSON.stringify(res));
-        }, 500);
+        }, 2500);
       },
     }
   };
