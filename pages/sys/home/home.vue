@@ -8,7 +8,7 @@
 					</span>
 				</view>
 			</view>
-			<view class="setting">
+			<view class="setting" @click="jump">
 				<image src="../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png" mode="aspectFit" alt=""></image>
 			</view>
 		</view>
@@ -109,6 +109,11 @@ import wsRequest from '../../../api/websocket.js'
 						this.scrollHeight = (data.height / 0.1) * 0.8;	
 					}).exec();	
 				})
+			},
+			jump() {
+			  uni.navigateTo({
+			    url: "/pages/sys/personal/setting/setting",
+			  });
 			},
 			send(){
 				if(this.text == ""){
