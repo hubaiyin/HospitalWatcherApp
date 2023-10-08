@@ -115,35 +115,36 @@
 				}
 			},
 			finish(){
+				console.log(this.userName)
 				uni.showModal({
 					title:'是否保存该用户名？',
 					showCancel:true,
-					success: () => {
-						const data = {
-							name:this.userName
+					success: (res) => {
+						console.log(res);
+						if(res.confirm){
+							uni.$http.get(`/api/v1/user/update/name/${this.userName}`).then(({data})=>{
+								console.log(data);
+								if(data.code === '00000'){
+									uni.showToast({
+										title:'修改成功',
+										duration:1500,
+										success: () => {
+											uni.setStorage({
+												key:'username',
+												data:this.userName
+											})
+										}
+									})
+								}else{
+									uni.showToast({
+										icon:'error',
+										duration:1500,
+										title:'修改失败'
+									})
+								}
+							})
 						}
-						uni.$http.get(`/api/v1/user/update/name/${data}`).then(({data})=>{
-							console.log(data);
-							if(data.code === '00000'){
-								uni.showToast({
-									title:'修改成功',
-									duration:1500,
-									success: () => {
-										uni.setStorage({
-											key:'username',
-											data:this.userName
-										})
-									}
-								})
-							}else{
-								uni.showToast({
-									icon:'error',
-									duration:1500,
-									title:'修改失败'
-								})
-							}
-						})
-					}
+					},
 				})
 			},
 			showInput(){

@@ -74,7 +74,7 @@
             :disable-scroll="!locked"
           ></canvas>
           <image
-            :src="img.replace(/[\r\n]/g,'')"
+            :src="img.replace(/[\r\n]/g, '')"
             mode="aspectFit"
             style="width: 100%; height: 100%"
           ></image>
@@ -145,7 +145,7 @@ export default {
   mounted() {
     console.log(this.warnData, this.monitorData);
     console.log(this.border);
-	this.getImg();
+    this.getImg();
   },
   data() {
     return {
@@ -159,15 +159,20 @@ export default {
       borData: {},
       painting: false,
       ability: JSON.parse(JSON.stringify(this.warnData.ability)),
-	  img:'',
+      img: "",
     };
   },
   methods: {
     async getImg() {
-      await uni.$http.get(`/api/v1/monitor/image/${this.warnData.id}`).then(({data})=>{
-		  this.img = ('data:image/png;base64,'+data.message).replace(/[\r\n]/g,'');
-	  });
-	},
+      await uni.$http
+        .get(`/api/v1/monitor/image/${this.warnData.id}`)
+        .then(({ data }) => {
+          this.img = ("data:image/png;base64," + data.message).replace(
+            /[\r\n]/g,
+            ""
+          );
+        });
+    },
     start(e) {
       if (this.locked) return;
       let x = e.touches[0].x;
@@ -218,16 +223,11 @@ export default {
       this.borData.minY = Math.min(newPoint.y, this.borData.minY);
     },
     changeShow() {
-      this.$emit("change",false);
+      this.$emit("change", false);
     },
     reset() {
       console.log("bye");
       this.ability = [
-        {
-          name: "进入危险区域",
-          value: 1,
-          checked: false,
-        },
         {
           name: "挥手",
           value: 2,
@@ -265,50 +265,53 @@ export default {
         title: "警告",
         content: "确定修改?",
         showCancel: true,
-        success: async () => {
-          let data = {};
-          if (this.border.length === 0) {
-            console.log("empty");
-            data = {
-              id: this.warnData.id,
-              name: this.warnData.name,
-              area: this.warnData.department,
-              leader: this.warnData.leader,
-              ip: this.warnData.video,
-              longitude: this.monitorData.longitude,
-              latitude: this.monitorData.latitude,
-              dangerArea: this.ability[0].checked,
-              fall: this.ability[2].checked,
-              flame: this.ability[3].checked,
-              smoke: this.ability[4].checked,
-              wave: this.ability[1].checked,
-              punch: this.ability[5].checked,
-            };
-          } else {
-            data = {
-              id: this.warnData.id,
-              name: this.warnData.name,
-              area: this.warnData.department,
-              leader: this.warnData.leader,
-              ip: this.warnData.video,
-              longitude: this.monitorData.longitude,
-              latitude: this.monitorData.latitude,
-              dangerArea: this.ability[0].checked,
-              fall: this.ability[2].checked,
-              flame: this.ability[3].checked,
-              smoke: this.ability[4].checked,
-              wave: this.ability[1].checked,
-              punch: this.ability[5].checked,
-              leftX: Math.floor(this.border[0].leftX),
-              leftY: Math.floor(this.border[0].leftY),
-              rightX: Math.floor(this.border[0].rightX),
-              rightY: Math.floor(this.border[0].rightY),
-            };
+        success: async (res) => {
+          if (res.confirm) {
+            let data = {};
+            if (this.border.length === 0) {
+              console.log("empty");
+              data = {
+                id: this.warnData.id,
+                name: this.warnData.name,
+                area: this.warnData.department,
+                leader: this.warnData.leader,
+                ip: this.warnData.video,
+                longitude: this.monitorData.longitude,
+                latitude: this.monitorData.latitude,
+                latitude: this.monitorData.latitude,
+                fall: this.ability[1].checked,
+                flame: this.ability[2].checked,
+                smoke: this.ability[3].checked,
+                wave: this.ability[0].checked,
+                punch: this.ability[4].checked,
+              };
+            } else {
+              data = {
+                id: this.warnData.id,
+                name: this.warnData.name,
+                area: this.warnData.department,
+                leader: this.warnData.leader,
+                ip: this.warnData.video,
+                longitude: this.monitorData.longitude,
+                latitude: this.monitorData.latitude,
+                fall: this.ability[1].checked,
+                flame: this.ability[2].checked,
+                smoke: this.ability[3].checked,
+                wave: this.ability[0].checked,
+                punch: this.ability[4].checked,
+                leftX: Math.floor(this.border[0].leftX),
+                leftY: Math.floor(this.border[0].leftY),
+                rightX: Math.floor(this.border[0].rightX),
+                rightY: Math.floor(this.border[0].rightY),
+              };
+            }
+            await uni.$http
+              .post("/api/v1/monitor/update", data)
+              .then(({ data }) => {
+                console.log("edit", data);
+                this.$emit("change", true);
+              });
           }
-          await uni.$http.post("/api/v1/monitor/update", data).then(({data})=>{
-			  console.log('edit',data);
-			  this.$emit("change",true);
-		  })
         },
       });
     },
@@ -336,7 +339,7 @@ export default {
   .border {
     border: 1px dotted red;
     position: absolute;
-	background-color: rgba(red, 0.5);
+    background-color: rgba(red, 0.5);
   }
   .titleBox {
     width: 100%;
@@ -389,18 +392,18 @@ export default {
     }
     .options {
       width: 100%;
-	  .group{
-		  display: flex;
-		  flex-wrap: wrap;
-		  // background-color: pink;
-		  padding: 0;
-		  width: 100%;
-		  justify-content: space-around;
-	  }
+      .group {
+        display: flex;
+        flex-wrap: wrap;
+        // background-color: pink;
+        padding: 0;
+        width: 100%;
+      }
       .borderBox {
-        width: 45%;
+        width: 44%;
         margin-top: 10px;
-		margin-left: -5px;
+        margin-left: 5px;
+        margin-right: 10px;
         .checkbox {
           display: flex;
           align-items: center;

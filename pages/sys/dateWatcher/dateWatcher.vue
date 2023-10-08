@@ -16,7 +16,7 @@
 						</span>
 					</view>
 				</view>
-				<view class="setting">
+				<view class="setting" @click="jump">
 					<image
 						src="../../../static/edb8e6b3-f7e0-4778-bdc4-691d6e4f1511.png"
 						mode="aspectFit"
@@ -54,6 +54,11 @@
 			chooseTwo() {
 				this.choosen = 2;
 				this.$forceUpdate();
+			},
+			jump() {
+			  uni.navigateTo({
+			    url: "/pages/sys/personal/setting/setting",
+			  });
 			}
 		}
 	}
