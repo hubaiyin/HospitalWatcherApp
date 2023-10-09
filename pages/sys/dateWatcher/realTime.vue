@@ -20,7 +20,7 @@
                     <view class="icon">
                         <image src="../../../static//alarm.png" mode="aspectFit"></image>
                     </view>
-                    <view class="titleText">危险区域</view>
+                    <view class="titleText">禁区</view>
                 </view>
                 <view class="text">
                     <span>总事件数：{{ caseList[0].total }}</span>

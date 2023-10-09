@@ -92,7 +92,7 @@ export default {
       res.series[0].data = this.result.data;
       setTimeout(() => {
         this.chartData = JSON.parse(JSON.stringify(res));
-      }, 2500);
+      }, 500);
     },
   },
   watch: {
