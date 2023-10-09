@@ -59,13 +59,19 @@
               {{ markersDetail[index].name }}
             </cover-view>
             <cover-view class="iconAndStatus">
-				<cover-view class="icon">
-				  <cover-image src="../../../static/monitor.png" alt=""></cover-image>
-				</cover-view>
-				<cover-view class="statuses" :class="markersDetail[index].running?'running':'stop'">
-				  状态：{{markersDetail[index].running?'在线':'离线'}}
-				</cover-view>
-			</cover-view>
+              <cover-view class="icon">
+                <cover-image
+                  src="../../../static/monitor.png"
+                  alt=""
+                ></cover-image>
+              </cover-view>
+              <cover-view
+                class="statuses"
+                :class="markersDetail[index].running ? 'running' : 'stop'"
+              >
+                状态：{{ markersDetail[index].running ? "在线" : "离线" }}
+              </cover-view>
+            </cover-view>
           </cover-view>
           <cover-view class="right">
             <cover-view style="line-height: 20px"
@@ -173,8 +179,8 @@ export default {
   },
   methods: {
     async changeShow(bool) {
-      console.log("被触发了");
-	  if(bool) await this.getMonitor();
+      // console.log("被触发了");
+      if (bool) await this.getMonitor();
       this.showEdit = false;
     },
     jump() {
@@ -183,7 +189,7 @@ export default {
       });
     },
     test() {
-      console.log("hi");
+      // console.log("hi");
       this.longitude = 116;
       this.latitude = 39;
     },
@@ -199,7 +205,7 @@ export default {
     async getMap() {
       await uni.$http.get("/api/v1/monitor/map").then(({ data }) => {
         const datas = data.data;
-        console.log(datas);
+        // console.log(datas);
         this.total = datas.total;
         this.working = datas.running;
         this.markersDetail = datas.monitorPosList;
@@ -209,8 +215,7 @@ export default {
             id: item.id,
             latitude: item.latitude,
             longitude: item.longitude,
-            iconPath:
-              "../../../static/locate.png",
+            iconPath: "../../../static/locate.png",
             width: 35,
             height: 35,
             title: item.name,
@@ -221,39 +226,43 @@ export default {
     },
     showMarker(e) {
       const id = e.detail.markerId;
-      console.log(id);
+      // console.log(id);
       this.index = this.markersDetail.findIndex((item) => {
         return item.id === id;
       });
       this.showDetail = true;
     },
-	editWorking(index){
-		const id = this.warnData[index].id
-		uni.showModal({
-			showCancel:true,
-			title:this.warnData[index].running?'是否关闭摄像头？':'是否启用摄像头？',
-			success: async (res) => {
-				if(res.confirm){
-					await uni.$http.post(`/api/v1/monitor/switch/${id}`).then(({data})=>{
-						console.log(data)
-						if(data.code === '00000'){
-							this.warnData[index].running = !this.warnData[index].running
-							if(this.warnData[index].running){
-								this.warnData[index].deal = '正在运行'
-							}else{
-								this.warnData[index].deal = '停止'
-							}
-						}
-					})
-				}
-			}
-		})
-		// this.warnData[index].running = !this.warnData[index].running
-	}
+    editWorking(index) {
+      const id = this.warnData[index].id;
+      uni.showModal({
+        showCancel: true,
+        title: this.warnData[index].running
+          ? "是否关闭摄像头？"
+          : "是否启用摄像头？",
+        success: async (res) => {
+          if (res.confirm) {
+            await uni.$http
+              .post(`/api/v1/monitor/switch/${id}`)
+              .then(({ data }) => {
+                // console.log(data)
+                if (data.code === "00000") {
+                  this.warnData[index].running = !this.warnData[index].running;
+                  if (this.warnData[index].running) {
+                    this.warnData[index].deal = "正在运行";
+                  } else {
+                    this.warnData[index].deal = "停止";
+                  }
+                }
+              });
+          }
+        },
+      });
+      // this.warnData[index].running = !this.warnData[index].running
+    },
   },
   onLoad() {
     this.safeHeight = uni.getWindowInfo().safeArea.height;
-    console.log(this.safeHeight);
+    // console.log(this.safeHeight);
     const that = this;
     this.$nextTick(() => {
       uni.getLocation({
@@ -276,7 +285,7 @@ export default {
       query
         .select("#watchBox")
         .boundingClientRect((data) => {
-          console.log("@", data);
+          // console.log("@", data);
           boxTop = data.top;
           boxHeight = data.height;
         })
@@ -285,11 +294,11 @@ export default {
         .select(".header")
         .boundingClientRect((data) => {
           headerHeight = data.height;
-          console.log(data);
+          // console.log(data);
           that.scrollHeight = that.safeHeight - headerHeight - 12;
         })
         .exec();
-      console.log("hi");
+      // console.log("hi");
     });
     this.getMonitor();
     this.getMap();
@@ -419,38 +428,38 @@ export default {
         // border: 2px solid red;
         font-size: 1.2rem;
         color: #fff;
-		height: 27px;
+        height: 27px;
         font-weight: 700;
       }
-      .iconAndStatus{
-		  display: flex;
-		  justify-content: space-around;
-		  align-items: center;
-		  height: 100rpx;
-		  width: 250rpx;
-		  .icon {
-		    width: 100rpx;
-		    height: 100rpx;
-		    // border: 2px solid red;
-		    cover-image {
-		      width: 100%;
-		      height: 100%;
-		    }
-		  }
-		  .statuses{
-		  	font-size: 0.8rem;
-			width: 150rpx;
-			height: 100rpx;
-			line-height: 100rpx;
-			font-weight: 700;
-		  }
-		  .running{
-			  color: #24F99A;
-		  }
-		  .stop{
-			  color: #F9B524;
-		  }
-	  }
+      .iconAndStatus {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 100rpx;
+        width: 250rpx;
+        .icon {
+          width: 100rpx;
+          height: 100rpx;
+          // border: 2px solid red;
+          cover-image {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .statuses {
+          font-size: 0.8rem;
+          width: 150rpx;
+          height: 100rpx;
+          line-height: 100rpx;
+          font-weight: 700;
+        }
+        .running {
+          color: #24f99a;
+        }
+        .stop {
+          color: #f9b524;
+        }
+      }
     }
     .right {
       width: 50%;
