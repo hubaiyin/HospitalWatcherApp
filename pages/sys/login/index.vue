@@ -183,7 +183,7 @@ export default {
   },
   methods: {
     changeShow(number) {
-      console.log(this.isShow);
+      // console.log(this.isShow);
       this.isShow = true;
     },
     jump() {
@@ -202,7 +202,7 @@ export default {
         password: this.password,
       };
       uni.$http.post("/api/v1/user/login", data).then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         if (data.code === "A1000") {
           uni.$showMsg(data.message);
           return;
@@ -213,9 +213,9 @@ export default {
             duration: 1500,
             icon: "none",
             success: () => {
-              console.log("hi");
-			  uni.setStorageSync('phone',this.username)
-			  uni.setStorageSync('username',data.data.name)
+              // console.log("hi");
+              uni.setStorageSync("phone", this.username);
+              uni.setStorageSync("username", data.data.name);
               uni.setStorage({
                 key: "token",
                 data: data.data.token,
