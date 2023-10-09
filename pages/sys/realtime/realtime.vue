@@ -286,7 +286,8 @@ export default {
   methods: {
     alert(index) {
       uni.makePhoneCall({
-      	phoneNumber:this.warnData[index].phone
+      	// phoneNumber:this.warnData[index].phone
+        
       })
     },
     setFilter(e) {
