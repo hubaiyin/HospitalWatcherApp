@@ -216,7 +216,7 @@ export default {
     return {
       top: 0,
       scrollTop: 0,
-      statusList: "loading",
+      statusList: "nomore",
       moveX: 0,
       startX: 0,
       safeAreaTop: 0,
@@ -310,6 +310,7 @@ export default {
       }
     },
     getMore(e) {
+		this.statusList = 'loading'
       if (this.choosen && !this.hisIsAll) {
         this.pageNum++;
         const data = {
@@ -384,6 +385,7 @@ export default {
       uni.$http.get("/api/v1/alarm/query", data).then(({ data }) => {
         // console.log(data);
         this.warnData = data.data.alarmList;
+		if(!this.warnData.length) this.statusList = 'nomore'
         if (data.data.count < this.pageSize) {
           this.warnIsAll = true;
         }
@@ -406,6 +408,7 @@ export default {
       }
       uni.$http.get("/api/v1/alarm/query", data).then(({ data }) => {
         this.historyData = data.data.alarmList;
+		if(!this.historyData.length) this.statusList = 'nomore'
         if (data.data.count < this.pageSize) {
           this.hisIsAll = true;
         }

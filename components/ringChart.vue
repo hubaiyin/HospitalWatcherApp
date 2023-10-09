@@ -91,7 +91,7 @@
         }
         await this.getData();
         res.series[0].data = this.result;
-        console.log(res);
+        // console.log(res);
         setTimeout(() => {
           this.chartData = JSON.parse(JSON.stringify(res));
         }, 500);
