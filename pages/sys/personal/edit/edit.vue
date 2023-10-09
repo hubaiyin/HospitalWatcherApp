@@ -163,7 +163,7 @@ export default {
           // console.log(res);
           if (res.confirm) {
             uni.$http
-              .get(`/api/v1/user/update/name/${this.userName}`)
+              .post(`/api/v1/user/update/name/${this.userName}`)
               .then(({ data }) => {
                 // console.log(data);
                 if (data.code === "00000") {

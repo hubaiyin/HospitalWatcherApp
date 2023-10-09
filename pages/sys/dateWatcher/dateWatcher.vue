@@ -1,6 +1,6 @@
 <template>
   <view class="main" :style="{ height: safeHeight + 'px' }">
-    <view class="inner">
+    <view class="inner" v-if="isShow">
       <view class="header">
         <view class="topNav">
           <view
@@ -48,11 +48,18 @@ export default {
       safeHeight: 0,
       selected: false,
       choosen: 1,
+	  isShow:true,
     };
   },
   onLoad() {
     this.safeHeight = uni.getWindowInfo().safeArea.height;
     // console.log(this.safeHeight);
+  },
+  onShow(){
+	  this.isShow = true
+  },
+  onHide(){
+	  this.isShow = false
   },
   methods: {
     chooseOne() {

@@ -35,8 +35,8 @@
       <map
         v-show="choosen !== 2"
         style="flex: 1; width: 100%; position: relative"
-        :longitude="longitude"
-        :latitude="latitude"
+        longitude="117.14"
+        latitude="39.062"
         :show-location="isShow"
         id="map1"
         :markers="markers"
@@ -205,7 +205,7 @@ export default {
     async getMap() {
       await uni.$http.get("/api/v1/monitor/map").then(({ data }) => {
         const datas = data.data;
-        // console.log(datas);
+        console.log(datas);
         this.total = datas.total;
         this.working = datas.running;
         this.markersDetail = datas.monitorPosList;
@@ -264,19 +264,19 @@ export default {
     this.safeHeight = uni.getWindowInfo().safeArea.height;
     // console.log(this.safeHeight);
     const that = this;
-    this.$nextTick(() => {
-      uni.getLocation({
-        success: (res) => {
-          that.longitude = res.longitude;
-          that.latitude = res.latitude;
-          setInterval(() => {
-            let $map = uni.createMapContext("map1", that);
-            let $appMap = $map.$getAppMap();
-            $appMap.showUserLocation(true);
-          }, 1000);
-        },
-      });
-    });
+    // this.$nextTick(() => {
+    //   uni.getLocation({
+    //     success: (res) => {
+    //       that.longitude = res.longitude;
+    //       that.latitude = res.latitude;
+    //       setInterval(() => {
+    //         let $map = uni.createMapContext("map1", that);
+    //         let $appMap = $map.$getAppMap();
+    //         $appMap.showUserLocation(true);
+    //       }, 1000);
+    //     },
+    //   });
+    // });
     let boxTop = 0;
     let headerHeight = 0;
     let boxHeight = 0;
@@ -300,9 +300,24 @@ export default {
         .exec();
       // console.log("hi");
     });
-    this.getMonitor();
-    this.getMap();
   },
+  onShow(){
+	  this.getMonitor();
+	  this.getMap();
+  },
+  watch:{
+	  choosen:{
+		  handler(newVal){
+			  console.log(newVal)
+			  if(newVal === 1){
+				  // console.log('hi')
+				  this.getMap();
+			  }else{
+				  this.getMonitor()
+			  }
+		  }
+	  }
+  }
 };
 </script>
 

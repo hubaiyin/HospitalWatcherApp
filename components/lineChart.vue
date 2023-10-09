@@ -56,7 +56,7 @@ export default {
       }
       await uni.$http.get("/api/v1/alarm/query/cnt/history" , data)
       .then(res => {
-        console.log(res);
+        // console.log(res);
         if(res.data.code !== "00000") {
           uni.showToast({
             title: "获取图表数据失败",
