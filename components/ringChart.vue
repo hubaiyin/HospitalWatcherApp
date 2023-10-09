@@ -70,12 +70,12 @@
           }
           else {
             const temp = [
-              {'name':'长时停留'  , 'value': 129},
-              {'name':'进入禁区','value':res.data.data.alarmCaseTypeTotalList[0].total},
+              {'name':res.data.data.alarmCaseTypeTotalList[0].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[0].total},
               {'name':res.data.data.alarmCaseTypeTotalList[1].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[1].total},
               {'name':res.data.data.alarmCaseTypeTotalList[2].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[2].total},
               {'name':res.data.data.alarmCaseTypeTotalList[3].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[3].total},
               {'name':res.data.data.alarmCaseTypeTotalList[4].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[4].total},
+              {'name':res.data.data.alarmCaseTypeTotalList[5].caseTypeName,'value':res.data.data.alarmCaseTypeTotalList[4].total},
             ]
             this.result = temp;
           }
@@ -94,7 +94,7 @@
         console.log(res);
         setTimeout(() => {
           this.chartData = JSON.parse(JSON.stringify(res));
-        }, 2500);
+        }, 500);
       },
     }
   };

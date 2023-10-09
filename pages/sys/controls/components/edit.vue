@@ -143,8 +143,8 @@ export default {
     },
   },
   mounted() {
-    console.log(this.warnData, this.monitorData);
-    console.log(this.border);
+    // console.log(this.warnData, this.monitorData);
+    // console.log(this.border);
     this.getImg();
   },
   data() {
@@ -214,7 +214,7 @@ export default {
         },
       ];
       this.borData = {};
-      console.log("end", this.border);
+      // console.log("end", this.border);
     },
     push(newPoint) {
       this.borData.maxX = Math.max(newPoint.x, this.borData.maxX);
@@ -226,7 +226,7 @@ export default {
       this.$emit("change", false);
     },
     reset() {
-      console.log("bye");
+      // console.log("bye");
       this.ability = [
         {
           name: "挥手",
@@ -256,11 +256,11 @@ export default {
       ];
     },
     resetBorder() {
-      console.log("hi");
+      // console.log("hi");
       this.border = [];
     },
     async checkChange() {
-      console.log(this.border);
+      // console.log(this.border);
       uni.showModal({
         title: "警告",
         content: "确定修改?",
@@ -269,7 +269,7 @@ export default {
           if (res.confirm) {
             let data = {};
             if (this.border.length === 0) {
-              console.log("empty");
+              // console.log("empty");
               data = {
                 id: this.warnData.id,
                 name: this.warnData.name,
@@ -308,7 +308,7 @@ export default {
             await uni.$http
               .post("/api/v1/monitor/update", data)
               .then(({ data }) => {
-                console.log("edit", data);
+                // console.log("edit", data);
                 this.$emit("change", true);
               });
           }

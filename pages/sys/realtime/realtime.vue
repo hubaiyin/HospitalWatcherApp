@@ -104,7 +104,7 @@
           @touchend="stopMove($event, item)"
           :style="{ transform: 'translateX(' + item.moveX + 'px)' }"
         >
-          <view class="details" :class="item.moveX===0?'bor':''">
+          <view class="details" :class="item.moveX === 0 ? 'bor' : ''">
             <view class="deviceName">
               {{ item.name }}
             </view>
@@ -161,12 +161,12 @@
                 mode="aspectFit"
               ></image>
             </view>
-			<view class="finish" @tap="deleteItem(index)" v-show="choosen">
-			  完成<image
-			    src="../../../static/finish.png"
-			    mode="aspectFit"
-			  ></image>
-			</view>
+            <view class="finish" @tap="deleteItem(index)" v-show="choosen">
+              完成<image
+                src="../../../static/finish.png"
+                mode="aspectFit"
+              ></image>
+            </view>
           </view>
         </view>
         <u-loadmore :status="statusList"></u-loadmore>
@@ -275,7 +275,7 @@ export default {
     });
   },
   onShow() {
-    console.log("realShow");
+    // console.log("realShow");
     this.choosen = 0;
     this.caseType = null;
     this.filterIndex = null;
@@ -286,9 +286,8 @@ export default {
   methods: {
     alert(index) {
       uni.makePhoneCall({
-      	// phoneNumber:this.warnData[index].phone
-        
-      })
+        phoneNumber: this.warnData[index].phone,
+      });
     },
     setFilter(e) {
       this.caseType = this.filterValue[e.indexs[0]];
@@ -338,14 +337,14 @@ export default {
       } else if (this.choosen && this.hisIsAll) {
         return;
       } else if (!this.choosen && !this.warnIsAll) {
-        console.log("0 more");
+        // console.log("0 more");
         this.pageNum++;
         const data = {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           status: 0,
         };
-        console.log(data);
+        // console.log(data);
         if (this.caseType) {
           data.caseType = this.caseType;
         }
@@ -353,7 +352,7 @@ export default {
           data.warningLevel = this.warningLevel;
         }
         uni.$http.get("/api/v1/alarm/query", data).then(({ data }) => {
-          console.log(data);
+          // console.log(data);
           this.warnData.push(...data.data.alarmList);
           if (data.data.count < this.pageSize) {
             this.warnIsAll = true;
@@ -383,7 +382,7 @@ export default {
         data.warningLevel = this.warningLevel;
       }
       uni.$http.get("/api/v1/alarm/query", data).then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         this.warnData = data.data.alarmList;
         if (data.data.count < this.pageSize) {
           this.warnIsAll = true;
@@ -487,7 +486,7 @@ export default {
       });
     },
     setContent(val, id) {
-      console.log(val, id);
+      // console.log(val, id);
       this.content = val;
       this.id = id;
     },
@@ -506,7 +505,7 @@ export default {
         processingContent: this.content,
       };
       await uni.$http.put("/api/v1/alarm/update", data).then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         if (this.choosen) {
           this.getHistoryList();
         } else {
@@ -687,11 +686,11 @@ export default {
       height: 300rpx;
       margin-bottom: 20rpx;
       position: relative;
-	  border-radius: 15rpx;
-	  // overflow: auto;
-	  .bor{
-		  border-radius: 15rpx!important;
-	  }
+      border-radius: 15rpx;
+      // overflow: auto;
+      .bor {
+        border-radius: 15rpx !important;
+      }
       .details {
         width: 100%;
         height: 300rpx;
@@ -807,7 +806,7 @@ export default {
         flex-direction: column;
         .edit,
         .deal,
-		.finish,
+        .finish,
         .delete {
           flex: 1;
           width: 100%;
@@ -825,9 +824,9 @@ export default {
         .deal {
           background-color: #ffbc5d;
         }
-		.finish {
-		  background-color: #06BFA1;
-		}
+        .finish {
+          background-color: #06bfa1;
+        }
         .delete {
           background-color: #ff5d5d;
           image {
