@@ -75,7 +75,7 @@
           </cover-view>
           <cover-view class="right">
             <cover-view style="line-height: 20px"
-              >监测到危险情况数量：{{
+              >监测到危险情况数：{{
                 markersDetail[index].alarmCnt
               }}</cover-view
             >
@@ -246,12 +246,8 @@ export default {
               .then(({ data }) => {
                 // console.log(data)
                 if (data.code === "00000") {
-                  this.warnData[index].running = !this.warnData[index].running;
-                  if (this.warnData[index].running) {
-                    this.warnData[index].deal = "正在运行";
-                  } else {
-                    this.warnData[index].deal = "停止";
-                  }
+                  this.getMonitor();
+				  this.getMap();
                 }
               });
           }
@@ -451,7 +447,7 @@ export default {
         justify-content: space-around;
         align-items: center;
         height: 100rpx;
-        width: 250rpx;
+        width: 240rpx;
         .icon {
           width: 100rpx;
           height: 100rpx;
@@ -463,7 +459,7 @@ export default {
         }
         .statuses {
           font-size: 0.8rem;
-          width: 150rpx;
+          width: 140rpx;
           height: 100rpx;
           line-height: 100rpx;
           font-weight: 700;

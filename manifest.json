@@ -2,8 +2,8 @@
     "name" : "医患智警",
     "appid" : "__UNI__99942BA",
     "description" : "",
-    "versionName" : "1.0.0",
-    "versionCode" : "100",
+    "versionName" : "1.0.1",
+    "versionCode" : 101,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -35,6 +35,8 @@
                     "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.ADD_VOICEMAIL\"/>",
+                    "<uses-permission android:name=\"android.permission.CALL_PHONE\"/>",
+                    "<uses-permission android:name=\"android.permission.CALL_PRIVILEGED\"/>",
                     "<uses-permission android:name=\"android.permission.CAMERA\"/>",
                     "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
