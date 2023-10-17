@@ -5,6 +5,10 @@
         :src="warnData.video"
         style="width: 328px; height: 246px; transition: 1s"
       ></video>
+	  <!-- <video
+	    src="https://hospital-alarm-1318141347.cos.ap-beijing.myqcloud.com/fake.mp4?q-sign-algorithm=sha1&q-ak=AKIDcI2rYIwPjrxxuxud7OWXP8j7VuDPOAl9&q-sign-time=1697011943%3B1728547943&q-key-time=1697011943%3B1728547943&q-header-list=host&q-url-param-list=&q-signature=bbe1620113d915ae3f0b309483630f9782880b13"
+	    style="width: 328px; height: 246px; transition: 1s"
+	  ></video> -->
     </view>
     <view style="height: 200px; overflow: auto; width: 328px">
       <view class="contents">
@@ -49,7 +53,7 @@
         <view class="line">
           <view class="column left"> 时间 </view>
           <view class="column right" style="font-size: 32rpx">
-            {{ warnData.time }}
+            {{ warnData.date }}
           </view>
         </view>
       </view>
