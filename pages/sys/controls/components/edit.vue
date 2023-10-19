@@ -24,7 +24,7 @@
       </view>
       <view class="video">
         <video
-          src="http://101.43.254.115:1975/flv?port=1985&app=live&stream=test1"
+          :src="warnData.video"
           :is-live="true"
           :autoplay="true"
           style="
@@ -167,7 +167,7 @@ export default {
       await uni.$http
         .get(`/api/v1/monitor/image/${this.warnData.id}`)
         .then(({ data }) => {
-			console.log(data);
+          console.log(data);
           this.img = ("data:image/png;base64," + data.message).replace(
             /[\r\n]/g,
             ""
@@ -306,7 +306,7 @@ export default {
                 rightY: Math.floor(this.border[0].rightY),
               };
             }
-			console.log(data);
+            console.log(data);
             await uni.$http
               .post("/api/v1/monitor/update", data)
               .then(({ data }) => {
@@ -319,15 +319,15 @@ export default {
     },
     checkboxChange(e) {
       let values = e.target.value;
-	  console.log(values)
+      console.log(values);
       this.ability.forEach((item) => {
         if (values.includes(item.value)) {
           item.checked = true;
-        }else{
-			item.checked = false;
-		}
+        } else {
+          item.checked = false;
+        }
       });
-	  console.log(this.ability)
+      console.log(this.ability);
     },
     limitation(item) {
       item.time = Math.abs(item.time);
@@ -346,7 +346,7 @@ export default {
     border: 1px dotted red;
     position: absolute;
     background-color: rgba(red, 0.5);
-	z-index: 999;
+    z-index: 999;
   }
   .titleBox {
     width: 100%;
