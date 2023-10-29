@@ -118,7 +118,7 @@
             </view>
             <view class="positonAndtime">
               <view class="time">
-                {{ item.time }}
+                {{ item.date }}
               </view>
               <view class="position">
                 {{ item.department }}
@@ -281,15 +281,22 @@ export default {
     this.filterIndex = null;
     this.warningLevel = null;
     this.statusIndex = null;
+	this.statusList= "nomore";
+	this.hisIsAll = false;
+	this.warnIsAll = false;
     this.getRealList();
   },
   methods: {
     alert(index) {
+		console.log(this.warnData[index].phone)
       uni.makePhoneCall({
         phoneNumber: this.warnData[index].phone,
       });
     },
     setFilter(e) {
+		this.pageNum = 1;
+		this.hisIsAll = false;
+		this.warnIsAll = false;
       this.caseType = this.filterValue[e.indexs[0]];
       this.filterIndex = e.indexs[0];
       this.showFilter = false;
@@ -300,6 +307,9 @@ export default {
       }
     },
     setStatus(e) {
+		this.pageNum = 1;
+		this.hisIsAll = false;
+		this.warnIsAll = false;
       this.warningLevel = this.statusValue[e.indexs[0]];
       this.statusIndex = e.indexs[0];
       this.showStatus = false;
@@ -311,6 +321,7 @@ export default {
     },
     getMore(e) {
 		this.statusList = 'loading'
+		// console.log(this.hisIsAll)
       if (this.choosen && !this.hisIsAll) {
         this.pageNum++;
         const data = {
@@ -327,6 +338,7 @@ export default {
         uni.$http.get("/api/v1/alarm/query", data).then(({ data }) => {
           this.historyData.push(...data.data.alarmList);
           if (data.data.count < this.pageSize) {
+			  // console.log(data.data.count)
             this.hisIsAll = true;
             this.statusList = "nomore";
           }
@@ -336,6 +348,7 @@ export default {
           this.scrollTop = this.top;
         });
       } else if (this.choosen && this.hisIsAll) {
+		  this.statusList = 'nomore'
         return;
       } else if (!this.choosen && !this.warnIsAll) {
         // console.log("0 more");
@@ -353,7 +366,7 @@ export default {
           data.warningLevel = this.warningLevel;
         }
         uni.$http.get("/api/v1/alarm/query", data).then(({ data }) => {
-          // console.log(data);
+          console.log(data);
           this.warnData.push(...data.data.alarmList);
           if (data.data.count < this.pageSize) {
             this.warnIsAll = true;
@@ -364,6 +377,7 @@ export default {
           });
         });
       } else if (!this.choosen && this.warnIsAll) {
+		  this.statusList = 'nomore'
         return;
       }
     },
@@ -371,6 +385,7 @@ export default {
       this.top = e.detail.scrollTop;
     },
     getRealList() {
+		this.statusList = 'loading'
       const data = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
@@ -388,6 +403,7 @@ export default {
 		if(!this.warnData.length) this.statusList = 'nomore'
         if (data.data.count < this.pageSize) {
           this.warnIsAll = true;
+		  this.statusList = 'nomore'
         }
         this.warnData.map((item) => {
           this.$set(item, "moveX", 0);
@@ -395,6 +411,7 @@ export default {
       });
     },
     getHistoryList() {
+		this.statusList = 'loading'
       const data = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
@@ -411,6 +428,7 @@ export default {
 		if(!this.historyData.length) this.statusList = 'nomore'
         if (data.data.count < this.pageSize) {
           this.hisIsAll = true;
+		  this.statusList = 'nomore'
         }
         this.historyData.map((item) => {
           this.$set(item, "moveX", 0);
@@ -423,6 +441,8 @@ export default {
       this.warningLevel = null;
       this.statusIndex = null;
       this.pageNum = 1;
+	  this.hisIsAll = false;
+	  this.warnIsAll = false;
       if (this.choosen) {
         this.getHistoryList();
       } else {
@@ -528,6 +548,8 @@ export default {
         this.filterIndex = null;
         this.warningLevel = null;
         this.statusIndex = null;
+		this.hisIsAll = false;
+		this.warnIsAll = false;
         this.statusList = "loading";
         if (newVal === 1) {
           this.getHistoryList();

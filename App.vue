@@ -27,7 +27,7 @@ export default {
         }
         uni.createPushMessage({
           title: res.data.title,
-          content: res.data.content,
+          content: '您有一条新的报警信息，请及时处理',
           sound: "system",
         });
         check = 0;
